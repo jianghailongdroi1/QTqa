@@ -145,15 +145,18 @@ LOGGING = {
     }
 }
 
+#httprunner项目的根目录
 HTTPRUNNER_PROJECT_PATH={
     'baidu':'D:\PycharmProjects\demo'
 }
 
+#执行httprunner的yml文件的设置
 HTTPRUNNER_RUN_SETTINGS={
     'failfast': False,
     'report_dir': 'D:\\demo\\testreport'
 }
 
+#轮询待执行任务的时间设置，单位是 秒
 SCHEDULED_TASKS_RUN_SETTINGS={
     'interval_time': 60
 }
