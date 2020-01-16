@@ -58,6 +58,8 @@ def excute_job_immediately(request,project):
 
     return HttpResponse("添加成功")
 
+
+
 #新建一个定时任务(调试版)
 def create_cron_job(request):
     message = None
