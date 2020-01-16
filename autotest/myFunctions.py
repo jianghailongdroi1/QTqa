@@ -224,6 +224,8 @@ def test_run_cronjob(cronjob_id):
     project_code = cronjob_obj.project.project_code
 
     #根据定时任务获取相关的suites
+    if cronjob_obj.suite_set.filter(effective_flag=1).count() == 0:
+        return  HttpResponse('没有关联的suite')
     suite_dic = cronjob_obj.suite_set.filter(effective_flag=1).values("suite_name")
 
     # 获取项目的根目录，并拼接
@@ -232,24 +234,31 @@ def test_run_cronjob(cronjob_id):
     for i in suite_dic:
         suite_list.append(suite_path + i["suite_name"])
 
-    #跑每个suite
-    for suite in suite_list:
-        result = run_httprunnner_script(suite)
-        report_path = result['reportpath']
-        start_time = result['time']['start_datetime']
-        summary = result['stat']['testcases']
-        result_name = cronjob_obj.project.project_name + '项目' + start_time + "手动触发执行的结果"
+    try:
+        #跑每个suite
+        for suite in suite_list:
+            result = run_httprunnner_script(suite)
+            report_path = result['reportpath']
+            start_time = result['time']['start_datetime']
+            summary = result['stat']['testcases']
+            result_name = cronjob_obj.project.project_name + '项目' + start_time + "手动触发执行的结果"
 
-        # 将执行结果放入表中
-        project_obj = cronjob_obj.project
-        models.Job_result.objects.create(result_name=result_name, project=project_obj,
-                                         execute_by=3, executed_result=summary,
-                                         link_for_result=report_path, time_start_excute=start_time)
+            # 将执行结果放入表中
+            project_obj = cronjob_obj.project
+            models.Job_result.objects.create(result_name=result_name, project=project_obj,
+                                             execute_by=3, executed_result=summary,
+                                             link_for_result=report_path, time_start_excute=start_time)
 
-    cronjob_obj.status = '6'
-    cronjob_obj.save()
+        cronjob_obj.status = '6'
+        cronjob_obj.save()
 
-    return HttpResponse('测试 test_run_cronjob')
+        return HttpResponse(' 试运行成功！')
+    except Exception:
+        cronjob_obj.status = '3'
+        cronjob_obj.save()
+        return HttpResponse(' 试运行失败！')
+
+
 
 
 def get_project_basedir(project_code):
