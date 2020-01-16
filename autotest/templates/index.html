@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>index page</title>
+</head>
+<body>
+{#<h4>变量{{ z }}:深度查询</h4><hr>#}
+<h3>{{ name }}</h3>
+<p>{{ i }}</p>
+<p>{{ l }}</p>
+<p>{{ d }}</p>
+<p>{{ l.0 }}------》取单个值可通过句点符（也就是点）</p>
+<p>{{ l.4 }}</p>
+<p>{{ d.name }}</p>
+<p>{{ d.age }}-----》字典也可以根据句点符取值，一个点就搞定了。
+然而在前端页面中是看不到你的模板语法的，当你点击审查元素的
+时候，你就会发现，偷偷的换过来了</p>
+<p>{{ person_dada.name }}</p>
+<p>{{ person_egon.age }}</p>
+<p>{{ person_dada.dream }}</p>  <!-- .方法的时候，注意当前的dream方法是没有参数的-->
+<p>{{ person_list.2 }}</p>  <!--单个取值-->
+<p>{{ person_list.1.name }}</p>
+<!-- 那怎么让对象变成字符串呢？在index视图函数里里面再加上一个__str__内置方法-->
+<!--__str__是对象字符串的改变-->
+<h3>循环取值1</h3><hr>
+{% for item in person_list %}
+    <p>{{ item.name }},{{ item.age }}</p>
+{% endfor %}
+
+<h3>循环取值2:倒序</h3><hr>
+{% for item in person_list reversed %}
+{#    <!--序号从1开始-->#}
+{#    <p>{{ forloop.counter }}----->{{ item.name }},{{ item.age }}</p>#}
+{#    <!--序号从0开始-->#}
+{#    <p>{{ forloop.counter0 }}----->{{ item.name }},{{ item.age }}</p>#}
+    <!-- 序号倒序 -->
+    <p>{{ forloop.revcounter }}----->{{ item.name }},{{ item.age }}</p>
+{% endfor %}
+
+<h3>循环取值3：字典</h3><hr>
+{% for k,v in d.items %}
+    <p>{{ k }},{{ v}}</p>
+{#    for....empty ：for 标签带有一个可选的{% empty %} 从句，以便在给出的组是空的或者没有被找到时，可以有所操作#}
+    {% empty %}
+    <p>sorry,no person here</p>
+{% endfor %}
+</body>
+</html>

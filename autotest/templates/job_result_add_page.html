@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width">
+    <title>定时任务执行结果新增调试页面</title>
+    <style>
+        table{
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+<h1>新增任务执行结果</h1>
+<form action="{% url 'job_result_add' %}" method="post">
+    {% csrf_token %}
+    <p>结果名称<input type="text" name="result_name"></p>
+    <p>项目名称<input type="text" name="project_name"></p>
+    <p>执行人<input type="checkbox" name="execute_by" value="1">自动执行
+            <input type="checkbox" name="execute_by" value="2">手动执行
+            <input type="checkbox" name="execute_by" value="3">外界触发执行
+    </p>
+    <p>执行结果综述<input type="text" name="executed_result"></p>
+    <p>结果报告链接<input type="text" name="link_for_result"></p>
+    <p>执行开始时间<input type="text" name="time_start_excute"></p>
+    <p><input type="submit"></p>
+</form>
+</body>
+</html>

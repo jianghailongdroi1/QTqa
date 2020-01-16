@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>login page</title>
+</head>
+<body>
+<h1>登陆页面标题</h1>
+<form action="{% url 'login' %}" method="get">
+    <p>姓名<input type="text" name="user"></p>
+    <p>密码<input type="text" name="pwd"></p>
+    <input type="submit">
+</form>
+</body>
+</html>
