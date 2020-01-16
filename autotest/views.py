@@ -10,6 +10,7 @@ from autotest import myFunctions
 def get_job_result_add_page(request):
     return render(request,"job_result_add_page.html")
 
+#调试用
 def job_result_add(request):
     if request.method == "GET":
         project_obj = models.Project.objects.filter(id=2)[0]
@@ -57,7 +58,7 @@ def excute_job_immediately(request,project):
 
     return HttpResponse("添加成功")
 
-#新建一个定时任务(测试版)
+#新建一个定时任务(调试版)
 def create_cron_job(request):
     message = None
     project_obj = models.Project.objects.filter(project_code='baidu')[0]
@@ -80,6 +81,7 @@ def create_cron_job(request):
 
     return HttpResponse("OK")
 
+
 #启动一个定时任务,新建子任务
 def start_cronjob_view(request,job_id):
     try:
@@ -93,9 +95,9 @@ def start_cronjob_view(request,job_id):
     iterval_time = job_obj.iterval_time
     maximum_times = job_obj.maximum_times
 
-    print("time_start_excute:",time_start_excute)
-    print("iterval_time:",iterval_time)
-    print("maximum_times:",maximum_times)
+    # print("time_start_excute:",time_start_excute)
+    # print("iterval_time:",iterval_time)
+    # print("maximum_times:",maximum_times)
 
     #计算每个子任务执行时间
     for i in range(1,maximum_times + 1 ):
@@ -104,13 +106,11 @@ def start_cronjob_view(request,job_id):
         models.Subtask.objects.create(cronjob=job_obj, time_excepte_excuted=excute_time.strftime("%Y-%m-%d %H:%M:%S"))
 
     #更新定时任务表的状态
-    models.CronJob.objects.filter(id=job_id, effective_flag=1, enable=0).update(enable = 1)
+    models.CronJob.objects.filter(id=job_id, effective_flag=1, enable=0).update(enable = 1,status = 2)
 
     #给出返回值
     return HttpResponse("定时任务已启动!")
 
-def excute_cronjob(request):
-    pass
 
 def test_run_cronjob(request,id):
     return myFunctions.test_run_cronjob(id)
