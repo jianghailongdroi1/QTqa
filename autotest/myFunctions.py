@@ -108,11 +108,11 @@ def reset_overdue_subtask():
 
 def reset_cronjob_status():
     #获取定时任务表中有哪些执行中的任务
-    cronjob_count = models.CronJob.objects.filter(enable=1,status__in=[2,3]).count()
+    cronjob_count = models.CronJob.objects.filter(enable=1,status__in=[2,3,6]).count()
     if cronjob_count == 0:
         return HttpResponse("没有运行中的定时任务")
     else:
-        for cronjob_obj in models.CronJob.objects.filter(enable=1,status__in=[2,3]).all():
+        for cronjob_obj in models.CronJob.objects.filter(enable=1,status__in=[2,3,6]).all():
             # 按照每个定时任务去查看对应的子任务总数，分别有哪些
             #子任务总数
             subtask_objs_count = models.Subtask.objects.filter(cronjob=cronjob_obj,effective_flag=1).count()
@@ -152,25 +152,20 @@ def search_subtask_to_excuted(interval_time):
     now = datetime.datetime.now()
     #下一次轮训任务的开始时间,为配置的时间
     next_scheduler_time = now + datetime.timedelta(seconds= interval_time)
-    # print("now:",now)
-    # print("next_scheduler_time:",next_scheduler_time)
+
     number_subtasks_to_excuted = models.Subtask.objects.filter(status=1, time_excepte_excuted__range=(now,next_scheduler_time)
                                          ).count()
     print("number_subtasks_to_excuted:",number_subtasks_to_excuted)
 
     if number_subtasks_to_excuted == 0:
         return None
-        # return HttpResponse('没有需要执行的任务 ')
     else:
         #返回需要执行的定时子任务的列表
         subtask_objs = models.Subtask.objects.filter(status=1, time_excepte_excuted__range=(now,next_scheduler_time)).all()
         return subtask_objs
 
 def excute_subtasks(subtask_objs):
-    # start_date = datetime.date(2020, 1, 15)
-    # end_date = datetime.date(2020, 1, 16)
-    # subtask_objs = models.Subtask.objects.filter(status=1, time_excepte_excuted__range=(start_date, end_date)).all()
-    print(subtask_objs)
+
     for subtask in subtask_objs:
         try:
             #子任务状态更新为 执行中
