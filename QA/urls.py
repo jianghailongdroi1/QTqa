@@ -38,6 +38,7 @@ urlpatterns = [
 
     url(r'^job_result_add/$', views.job_result_add, name='job_result_add'),
     url(r'^query_job_result/$', views.job_result_select, name='query_job_result'),
+    # url(r'^query_job_result/$', views.job_result_select, name='query_job_result'),
     #对外提供的执行冒烟测试的接口
     url(r'^execute_job_immediately/(?P<project>.*)$', views.excute_job_immediately, name='execute_job_immediately'),
     #调试用新建定时任务的接口
