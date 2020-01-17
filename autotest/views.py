@@ -5,6 +5,7 @@ from django.http import HttpResponse,request
 from autotest import models
 from django.conf import settings
 from autotest import myFunctions
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 # Create your views here.
 def get_job_result_add_page(request):
@@ -21,12 +22,46 @@ def job_result_add(request):
 
     results = models.Job_result.objects.all()
     data = {'result_list':results}
-    return render(request,"job_result_page.html",data)
+    return render(request, "job_result_page1.0.html", data)
 
-def job_result_select(request):
-    results = models.Job_result.objects.all()
-    data = {'result_list':results}
-    return render(request,"job_result_page.html",data)
+def job_result_select(request,pagenum =1):
+    job_result_list = models.Job_result.objects.all()#查看所有的数据
+    paginator = Paginator(job_result_list, 10)  # 这里的book_list必须是一个集合对象，把所有的书分页，一页有10个
+    print("count:",paginator.count)           #数据总数
+    print("num_pages",paginator.num_pages)    #总页数
+    page_range= paginator.page_range  #页码的列表
+    # page1=paginator.page(1) #第1页的page对象
+    # for i in page1:         #遍历第1页的所有数据对象
+    #     print(i)
+    print(paginator.page(1).object_list)  # 第1页的所有数据
+    page = request.GET.get('page', pagenum)
+    currentPage = int(page)
+
+    #  如果页数十分多时，换另外一种显示方式
+    if paginator.num_pages>30:
+
+        if currentPage-5<1:
+            page_range=range(1,11)
+        elif currentPage+5>paginator.num_pages:
+            page_range=range(currentPage-5,paginator.num_pages+1)
+
+        else:
+            page_range=range(currentPage-5,currentPage+5)
+    else:
+        page_range=paginator.page_range
+
+    try:
+        print(page)
+        job_result_list = paginator.page(page)
+    except PageNotAnInteger:
+        job_result_list = paginator.page(1)
+    except EmptyPage:
+        job_result_list = paginator.page(paginator.num_pages)
+
+    data = {'result_list':job_result_list}
+    data1 = {'result_list':job_result_list,"paginator":paginator,"currentPage":currentPage,"page_range":page_range}
+    # return render(request,"job_result_page1.0.html",data1)
+    return render(request,"job_result_page2.0.html",data1)
 
 #仅支持一个job跑一个suite
 def excute_job_immediately(request,project):
@@ -57,7 +92,6 @@ def excute_job_immediately(request,project):
                                      link_for_result=report_path,time_start_excute=start_time)
 
     return HttpResponse("添加成功")
-
 
 
 #新建一个定时任务(调试版)
