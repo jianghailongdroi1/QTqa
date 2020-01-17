@@ -10,7 +10,6 @@ from django.conf import settings
 from autotest import models
 
 
-
 def get_current_time():
     time_stamp = time.time()  # 当前时间的时间戳
     local_time = time.localtime(time_stamp)  #
@@ -108,11 +107,11 @@ def reset_overdue_subtask():
 
 def reset_cronjob_status():
     #获取定时任务表中有哪些执行中的任务
-    cronjob_count = models.CronJob.objects.filter(enable=1,status__in=[2,3,6]).count()
+    cronjob_count = models.CronJob.objects.filter(enable=1,status__in=[2,3]).count()
     if cronjob_count == 0:
         return HttpResponse("没有运行中的定时任务")
     else:
-        for cronjob_obj in models.CronJob.objects.filter(enable=1,status__in=[2,3,6]).all():
+        for cronjob_obj in models.CronJob.objects.filter(enable=1,status__in=[2,3]).all():
             # 按照每个定时任务去查看对应的子任务总数，分别有哪些
             #子任务总数
             subtask_objs_count = models.Subtask.objects.filter(cronjob=cronjob_obj,effective_flag=1).count()
@@ -155,7 +154,8 @@ def search_subtask_to_excuted(interval_time):
 
     number_subtasks_to_excuted = models.Subtask.objects.filter(status=1, time_excepte_excuted__range=(now,next_scheduler_time)
                                          ).count()
-    print("number_subtasks_to_excuted:",number_subtasks_to_excuted)
+
+    # print("number_subtasks_to_excuted:",number_subtasks_to_excuted)
 
     if number_subtasks_to_excuted == 0:
         return None
@@ -199,7 +199,7 @@ def excute_single_subtask(single_subtask):
         report_path = result['reportpath']
         start_time = result['time']['start_datetime']
         summary = result['stat']['testcases']
-        result_name = cronjob.project.project_name + '项目' + start_time + "定时任务触发执行的结果"
+        result_name =cronjob.job_name + '任务在' + start_time + "定时任务触发执行的结果"
 
         # 将执行结果放入表中
         project_obj = cronjob.project
@@ -236,7 +236,7 @@ def test_run_cronjob(cronjob_id):
             report_path = result['reportpath']
             start_time = result['time']['start_datetime']
             summary = result['stat']['testcases']
-            result_name = cronjob_obj.project.project_name + '项目' + start_time + "手动触发执行的结果"
+            result_name = cronjob_obj.job_name + '任务在' + start_time + "手动触发执行的结果"
 
             # 将执行结果放入表中
             project_obj = cronjob_obj.project
@@ -248,12 +248,11 @@ def test_run_cronjob(cronjob_id):
         cronjob_obj.save()
 
         return HttpResponse(' 试运行成功！')
+
     except Exception:
         cronjob_obj.status = '3'
         cronjob_obj.save()
         return HttpResponse(' 试运行失败！')
-
-
 
 
 def get_project_basedir(project_code):
