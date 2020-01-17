@@ -1,8 +1,11 @@
 from django.db import models
 import datetime
 
-#项目信息
+
 class Project(models.Model):
+    '''
+    项目信息表
+    '''
     project_code = models.CharField(max_length=50,verbose_name="项目code",null=False,unique=True)
     project_name = models.CharField(max_length=255,verbose_name="项目名称",null=False)
     description = models.CharField(max_length=255,verbose_name="描述")
@@ -23,9 +26,11 @@ class Project(models.Model):
     def __str__(self):
         return self.project_name
 
-#定时任务表
-class CronJob(models.Model):
 
+class CronJob(models.Model):
+    '''
+    定时任务表
+    '''
     project = models.ForeignKey("Project", on_delete=models.CASCADE,verbose_name='关联项目')
     job_name = models.CharField(max_length=255,verbose_name="job名称",null=False)
 
@@ -70,8 +75,11 @@ class CronJob(models.Model):
     def __str__(self):
         return self.job_name
 
-#定时子任务表
+
 class Subtask(models.Model):
+    '''
+    定时子任务表
+    '''
     cronjob = models.ForeignKey("CronJob", on_delete=models.CASCADE,verbose_name='所属定时任务')
 
     time_excepte_excuted = models.DateTimeField(verbose_name='期望执行时间')
@@ -102,8 +110,11 @@ class Subtask(models.Model):
     def __str__(self):
         return self.time_excepte_excuted.strftime("%Y-%m-%d %H:%M:%S")
 
-#任务执行结果
+
 class Job_result(models.Model):
+    '''
+    任务执行结果表
+    '''
     result_name = models.CharField(max_length=255,verbose_name="执行结果名称",null=False)
     project = models.ForeignKey("Project", on_delete=models.CASCADE,verbose_name='关联项目')
     EXECUTE_BY_CHOICES = (
@@ -125,7 +136,11 @@ class Job_result(models.Model):
     def __str__(self):
         return self.result_name
 
+
 class suite(models.Model):
+    '''
+    suite表
+    '''
     suite_name = models.CharField(max_length=255,verbose_name="suite名称",null=False,unique=True)
     project = models.ForeignKey("Project", on_delete=models.CASCADE,verbose_name='关联项目')
     cronjob=models.ManyToManyField(to="CronJob",blank=True,db_constraint = False)
