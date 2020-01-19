@@ -29,7 +29,7 @@ class Project(models.Model):
 
 class CronJob(models.Model):
     '''
-    定时任务表
+    任务表
     '''
     project = models.ForeignKey("Project", on_delete=models.CASCADE,verbose_name='关联项目')
     job_name = models.CharField(max_length=255,verbose_name="job名称",null=False)
@@ -40,21 +40,21 @@ class CronJob(models.Model):
     iterval_time = models.IntegerField(max_length=10,default=60,verbose_name='间隔时间(单位:分钟)')
 
     #限制最多执行多少次，是为了限制生成的子任务的个数。
-    maximum_times = models.IntegerField(max_length=10,default=100,verbose_name='最大执行次数')
+    maximum_times = models.IntegerField(default=100,verbose_name='执行次数')
 
-    ENABLE_CHOICES = (
-        ('0', '未启用'),
-        ('1', '启用')
+    TYPE_CHOICES = (
+        ('timing_task', '定时任务'),
+        ('instant_task', '立即执行任务'),
+        ('called_task', '第三方调用任务')
     )
-    enable = models.CharField(max_length=255,choices=ENABLE_CHOICES,verbose_name="是否启用",null=False,default='0')
+    type = models.CharField(max_length=255,choices=TYPE_CHOICES,verbose_name="任务类型",null=False,default='timing_task')
 
     STATUS_CHOICES = (
-        ('1', '未执行'),
+        ('1', '未启用'),
         ('2', '执行中'),
         ('3', '执行异常'),
         ('4', '执行完成'),
-        ('5', '过期任务'),
-        ('6', '试运行成功')
+        ('5', '过期任务')
     )
     status = models.CharField(max_length=255,choices=STATUS_CHOICES,verbose_name="执行结果",null=False,default='1')
     description = models.CharField(max_length=255,verbose_name="描述/备注",null=False)
@@ -117,12 +117,8 @@ class Job_result(models.Model):
     '''
     result_name = models.CharField(max_length=255,verbose_name="执行结果名称",null=False)
     project = models.ForeignKey("Project", on_delete=models.CASCADE,verbose_name='关联项目')
-    EXECUTE_BY_CHOICES = (
-        ('1', '自动执行'),
-        ('2', '手动执行'),
-        ('3', '外部触发执行')
-    )
-    execute_by = models.CharField(max_length=255,choices=EXECUTE_BY_CHOICES,verbose_name="执行类型",null=False)
+    cronjob = models.ForeignKey("CronJob",on_delete=models.CASCADE,verbose_name="关联任务")
+
     executed_result = models.CharField(max_length=255,verbose_name="执行结果综述",null=False)
     link_for_result = models.CharField(max_length=255,verbose_name="报告链接",null=False)
     time_start_excute = models.DateTimeField(verbose_name='执行开始时间')
@@ -146,12 +142,6 @@ class suite(models.Model):
     cronjob=models.ManyToManyField(to="CronJob",blank=True,db_constraint = False)
 
     description = models.CharField(max_length=255,verbose_name="描述",null=False)
-
-    STATUS_CHOICES = (
-        ('1', '须在冒烟测试中执行'),
-        ('2', '不需在冒烟测试中执行'),
-    )
-    status = models.CharField(max_length=10,choices=STATUS_CHOICES,verbose_name="是否执行冒烟测试",null=False)
 
     EFFECTIVE_CHOICES = (
         ('1', '有效'),
