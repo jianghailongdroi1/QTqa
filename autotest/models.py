@@ -14,7 +14,7 @@ class Project(models.Model):
         ('1', '有效'),
         ('0', '无效')
     )
-    effective_flag = models.CharField(max_length=255,choices=EFFECTIVE_CHOICES,verbose_name="是否有效",null=False)
+    effective_flag = models.CharField(max_length=255,choices=EFFECTIVE_CHOICES,verbose_name="是否有效",default=1)
     time_created = models.DateTimeField(auto_now_add=True,verbose_name='创建时间')
     time_updated = models.DateTimeField(verbose_name='更新时间',auto_now=True)
 
@@ -37,27 +37,33 @@ class CronJob(models.Model):
     #仅执行一次时，填写 开始执行时间,最大执行次数填 1
     time_start_excute = models.DateTimeField(default=datetime.datetime.now,null=False,verbose_name='开始执行时间')
 
-    iterval_time = models.IntegerField(max_length=10,default=60,verbose_name='间隔时间(单位:分钟)')
+    iterval_time = models.IntegerField(max_length=0,default=60,verbose_name='间隔时间(单位:分钟)')
 
     #限制最多执行多少次，是为了限制生成的子任务的个数。
-    maximum_times = models.IntegerField(default=100,verbose_name='执行次数')
+    maximum_times = models.IntegerField(default=0,verbose_name='执行次数')
 
     TYPE_CHOICES = (
         ('timing_task', '定时任务'),
-        ('instant_task', '立即执行任务'),
-        ('called_task', '第三方调用任务')
+        ('instant_task', '立即执行的任务'),
+        ('called_task', '第三方调用的任务')
     )
     type = models.CharField(max_length=255,choices=TYPE_CHOICES,verbose_name="任务类型",null=False,default='timing_task')
 
     STATUS_CHOICES = (
-        ('1', '未启用'),
+        ('1', '未执行'),
         ('2', '执行中'),
         ('3', '执行异常'),
         ('4', '执行完成'),
         ('5', '过期任务')
     )
     status = models.CharField(max_length=255,choices=STATUS_CHOICES,verbose_name="执行结果",null=False,default='1')
-    description = models.CharField(max_length=255,verbose_name="描述/备注",null=False)
+    description = models.CharField(max_length=255,verbose_name="描述/备注")
+    ENABLE_CHOICES = (
+        ('0', '未启用'),
+        ('1', '已启用'),
+        ('2', '已停用'),
+    )
+    enable = models.CharField(max_length=255,choices=ENABLE_CHOICES,verbose_name="是否启用",null=False,default='0')
 
     EFFECTIVE_CHOICES = (
         ('1', '有效'),
@@ -158,3 +164,11 @@ class suite(models.Model):
 
     def __str__(self):
         return self.suite_name
+
+
+class Product(models.Model):
+    name = models.CharField(max_length=50)
+    price = models.DecimalField(max_digits=8,decimal_places=2)
+
+    def __str__(self):
+          return self.name
