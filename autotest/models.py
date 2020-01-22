@@ -35,17 +35,17 @@ class CronJob(models.Model):
     job_name = models.CharField(max_length=255,verbose_name="job名称",null=False)
 
     #仅执行一次时，填写 开始执行时间,最大执行次数填 1
-    time_start_excute = models.DateTimeField(default=datetime.datetime.now,null=False,verbose_name='开始执行时间')
+    time_start_excute = models.DateTimeField(default=datetime.datetime.now,verbose_name='开始执行时间')
 
-    iterval_time = models.IntegerField(max_length=0,default=60,verbose_name='间隔时间(单位:分钟)')
+    iterval_time = models.IntegerField(max_length=10,default=0,verbose_name='间隔时间(单位:分钟)')
 
     #限制最多执行多少次，是为了限制生成的子任务的个数。
-    maximum_times = models.IntegerField(default=0,verbose_name='执行次数')
+    maximum_times = models.IntegerField(max_length=3,default=0,verbose_name='执行次数')
 
     TYPE_CHOICES = (
         ('timing_task', '定时任务'),
-        ('instant_task', '立即执行的任务'),
-        ('called_task', '第三方调用的任务')
+        ('instant_task', '立即执行任务'),
+        ('called_task', '第三方调用任务')
     )
     type = models.CharField(max_length=255,choices=TYPE_CHOICES,verbose_name="任务类型",null=False,default='timing_task')
 
@@ -97,14 +97,13 @@ class Subtask(models.Model):
         ('4', '执行完成'),
         ('5', '过期任务')
     )
-    status = models.CharField(max_length=255,choices=STATUS_CHOICES,verbose_name="执行结果",null=False,default=1)
-    description = models.CharField(max_length=255,verbose_name="描述/备注",null=False)
+    status = models.CharField(max_length=5,choices=STATUS_CHOICES,verbose_name="执行结果",default=1)
 
     EFFECTIVE_CHOICES = (
         ('1', '有效'),
         ('0', '无效')
     )
-    effective_flag = models.CharField(max_length=255,choices=EFFECTIVE_CHOICES,verbose_name="是否有效",null=False,default=1)
+    effective_flag = models.CharField(max_length=2,choices=EFFECTIVE_CHOICES,verbose_name="是否有效",null=False,default=1)
     time_created = models.DateTimeField(auto_now_add=True,verbose_name='创建时间')
     time_updated = models.DateTimeField(verbose_name='更新时间',auto_now=True)
 
@@ -144,16 +143,16 @@ class suite(models.Model):
     suite表
     '''
     suite_name = models.CharField(max_length=255,verbose_name="suite名称",null=False,unique=True)
-    project = models.ForeignKey("Project", on_delete=models.CASCADE,verbose_name='关联项目')
+    project = models.ForeignKey("Project", on_delete=models.CASCADE,verbose_name='关联项目',null=False)
     cronjob=models.ManyToManyField(to="CronJob",blank=True,db_constraint = False)
 
-    description = models.CharField(max_length=255,verbose_name="描述",null=False)
+    description = models.CharField(max_length=255,verbose_name="描述")
 
     EFFECTIVE_CHOICES = (
         ('1', '有效'),
         ('0', '无效')
     )
-    effective_flag = models.CharField(max_length=10,choices=EFFECTIVE_CHOICES,verbose_name="是否有效",null=False)
+    effective_flag = models.CharField(max_length=10,choices=EFFECTIVE_CHOICES,verbose_name="是否有效",default=1)
     time_created = models.DateTimeField(auto_now_add=True,verbose_name='创建时间')
     time_updated = models.DateTimeField(verbose_name='更新时间',auto_now=True)
 
@@ -166,9 +165,3 @@ class suite(models.Model):
         return self.suite_name
 
 
-class Product(models.Model):
-    name = models.CharField(max_length=50)
-    price = models.DecimalField(max_digits=8,decimal_places=2)
-
-    def __str__(self):
-          return self.name
