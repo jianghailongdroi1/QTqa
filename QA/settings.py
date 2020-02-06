@@ -27,7 +27,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -70,7 +69,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'QA.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
@@ -87,7 +85,6 @@ DATABASES = {
         }
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
@@ -147,7 +144,7 @@ LOGGING = {
 
 #httprunner项目的根目录
 HTTPRUNNER_PROJECT_PATH={
-    'baidu':'D:\PycharmProjects\demo'
+    'baidu':'D:\Script\httprunnerDemo'
 }
 
 #执行httprunner的yml文件的设置
@@ -158,5 +155,5 @@ HTTPRUNNER_RUN_SETTINGS={
 
 #轮询待执行任务的时间设置，单位是 秒
 SCHEDULED_TASKS_RUN_SETTINGS={
-    'interval_time': 60
+    'interval_time': 600
 }
