@@ -52,6 +52,8 @@ urlpatterns = [
     #20200204重构
     # 测试接口
     url(r'^test/', views.test_function),
+    # 调试用，执行subtask表中所有子任务
+    url(r'^excute_subtasks', views.excute_all_subtasks),
     # 对外提供的执行冒烟测试的接口
     url(r'^excute_job_by_thirdParty/(?P<project_code>.*)$', views.excute_job_by_thirdParty,
         name='excute_job_by_thirdParty'),
