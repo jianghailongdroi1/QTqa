@@ -37,10 +37,10 @@ class CronJob(models.Model):
     #仅执行一次时，填写 开始执行时间,最大执行次数填 1
     time_start_excute = models.DateTimeField(default=datetime.datetime.now,verbose_name='开始执行时间')
 
-    iterval_time = models.IntegerField(max_length=10,default=0,verbose_name='间隔时间(单位:分钟)')
+    iterval_time = models.IntegerField(default=0,verbose_name='间隔时间(单位:分钟)')
 
-    #限制最多执行多少次，是为了限制生成的子任务的个数。
-    maximum_times = models.IntegerField(max_length=3,default=0,verbose_name='执行次数')
+    #限制生成的子任务的个数。
+    maximum_times = models.IntegerField(default=0,verbose_name='执行次数')
 
     TYPE_CHOICES = (
         ('timing_task', '定时任务'),
@@ -63,13 +63,13 @@ class CronJob(models.Model):
         ('1', '已启用'),
         ('2', '已停用'),
     )
-    enable = models.CharField(max_length=255,choices=ENABLE_CHOICES,verbose_name="是否启用",null=False,default='0')
+    enable = models.CharField(max_length=5,choices=ENABLE_CHOICES,verbose_name="是否启用",null=False,default='0')
 
     EFFECTIVE_CHOICES = (
         ('1', '有效'),
         ('0', '无效')
     )
-    effective_flag = models.CharField(max_length=255,choices=EFFECTIVE_CHOICES,verbose_name="是否有效",null=False,default='1')
+    effective_flag = models.CharField(max_length=5,choices=EFFECTIVE_CHOICES,verbose_name="是否有效",null=False,default='1')
     time_created = models.DateTimeField(auto_now_add=True,verbose_name='创建时间')
     time_updated = models.DateTimeField(verbose_name='更新时间',auto_now=True)
 
@@ -123,6 +123,7 @@ class Job_result(models.Model):
     result_name = models.CharField(max_length=255,verbose_name="执行结果名称",null=False)
     project = models.ForeignKey("Project", on_delete=models.CASCADE,verbose_name='关联项目')
     cronjob = models.ForeignKey("CronJob",on_delete=models.CASCADE,verbose_name="关联任务")
+    subtask = models.ForeignKey("Subtask",on_delete=models.CASCADE,verbose_name="关联子任务")
 
     executed_result = models.CharField(max_length=255,verbose_name="执行结果综述",null=False)
     link_for_result = models.CharField(max_length=255,verbose_name="报告链接",null=False)
