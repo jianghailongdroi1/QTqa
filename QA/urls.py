@@ -39,8 +39,7 @@ urlpatterns = [
     url(r'^job_result_add/$', views.job_result_add, name='job_result_add'),
     url(r'^query_job_result/$', views.job_result_select, name='query_job_result'),
     # url(r'^query_job_result/$', views.job_result_select, name='query_job_result'),
-    #对外提供的执行冒烟测试的接口
-    url(r'^execute_job_immediately/(?P<project>.*)$', views.excute_job_immediately, name='execute_job_immediately'),
+
     #调试用新建定时任务的接口
     url(r'^create_cron_job/$', views.create_cron_job, name='create_cron_job'),
 
@@ -50,4 +49,10 @@ urlpatterns = [
     #试运行定时任务的接口，入参为定时任务的id
     url(r'^test_run_cronjob/(?P<cronjob_id>.*)$', views.test_run_cronjob),
 
+    #20200204重构
+    # 测试接口
+    url(r'^test/', views.test_function),
+    # 对外提供的执行冒烟测试的接口
+    url(r'^excute_job_by_thirdParty/(?P<project_code>.*)$', views.excute_job_by_thirdParty,
+        name='excute_job_by_thirdParty'),
 ]
