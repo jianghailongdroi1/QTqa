@@ -151,9 +151,13 @@ def start_cronjob_view(request,job_id):
 def test_run_cronjob(request,id):
     return myFunctions.test_run_cronjob(id)
 
-def test_function(request):
-    return myFunctions.excute_subtasks()
 
+def test_function(request):
+    return myFunctions.reset_cronjob_status()
+
+#手动执行调用启动subtask表中的子任务
+def excute_all_subtasks(request):
+    return myFunctions.test_excute_subtasks()
 #重构外部冒烟测试接口
 def excute_job_by_thirdParty(request,project_code):
     return myFunctions.create_new_subtask(project_code)
