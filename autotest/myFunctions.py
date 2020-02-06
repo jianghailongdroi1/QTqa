@@ -19,68 +19,22 @@ def get_current_time():
     return str_time
 
 #重构后的执行suite方法
-def run_httprunnner_script(suites):
+def run_httprunnner_script(suite):
     kwargs=settings.HTTPRUNNER_RUN_SETTINGS
     runner = HttpRunner(**kwargs)
 
-    if os.path.exists(suites):
-        result_runner = runner.run(suites)
+    if os.path.exists(suite):
+        result_runner = runner.run(suite)
         summary = runner.summary
         #将报告放到summary中去
         summary["reportpath"]=result_runner
-        print("summary:",summary)
+        # print("summary:",summary)
+        logger.info("summary:"+str(summary))
 
         return summary
     else:
-        raise Exception("suite不存在！")
-
-# #启动一个定时任务
-# def start_cronjob(job_id):
-#     exsit_flag = models.CronJob.objects.filter(id = job_id,effective_flag=1).count()
-#     if exsit_flag == 0:
-#         return "当前任务不存在或无效"
-#
-#     #获取job的信息：模式和 公式
-#     job_obj = models.CronJob.objects.filter(id=job_id, effective_flag=1).values('model','expression').first()
-#     model = job_obj["model"]
-#     expression = job_obj["expression"]
-#
-#     #根据job信息获取对应的suite
-#     suite_objs = models.suite.objects.filter(cronjob__suite__project_id=job_id).values('suite_name').all()
-#     suite_list = []
-#     for suite_obj in suite_objs:
-#         suite_list.append(suite_obj['suite_name'])
-#
-#     # 根据suite获取project(仅取第一个suite)
-#     project_obj = models.Project.objects.filter(suite__suite_name=suite_list[0]).values('project_code').first()
-#     project_code = project_obj["project_code"]
-#
-#     # 根据项目获取项目的testsuites存放在位置
-#     project_testsuites_path = get_testsuitesPath_by_projectCode(project_code)
-#
-#     #将suite名称和项目的testsuites路径进行拼接
-#     suite_final_path_list = []
-#     for i in suite_list:
-#         i = project_testsuites_path + i
-#         suite_final_path_list.append(i)
-#     print("suite_final_path_list:",suite_final_path_list)
-#
-#     #设置定时任务
-#         #1/检查公式是否正确（暂时不做）
-#         #2/设置定时任务
-#     scheduler = BlockingScheduler()
-#     scheduler.add_job(func=tick,trigger="cron", hour=17, minute=46)
-#
-#     # scheduler.add_job(func=tick1,args=['  testP  '],trigger="cron", hour=17, minute=46)
-#     # scheduler.add_job(func=tick1,args=("  testp1 "),trigger="cron", hour=17, minute=30)
-#
-#     try:
-#         scheduler.start()
-#         print('dsafjajsdfjda')
-#     except (KeyboardInterrupt, SystemExit):
-#         scheduler.shutdown()
-#
-#     return "测试程序"
+        logger.error(suite+"不存在！")
+        raise Exception(suite+"不存在！")
 
 #获取suite的目录
 def get_testsuitesPath_by_projectCode(project_code):
@@ -88,23 +42,6 @@ def get_testsuitesPath_by_projectCode(project_code):
     httprunner_project_path = settings.HTTPRUNNER_PROJECT_PATH[project_code]
     suite_path = httprunner_project_path + '\\testsuites\\'
     return suite_path
-
-# def excute_scheduled_tasks():
-#     #定时任务间隔时间
-#     interval_time = settings.SCHEDULED_TASKS_RUN_SETTINGS['interval_time']
-#
-#     #将过期subtask的任务重置为过期
-#     reset_overdue_subtask()
-#
-#     #查询 预期之间时间在区间内的subtask
-#     subtask_objs = search_subtask_to_excuted(interval_time)
-#
-#     # 执行查询到的subtask
-#     if subtask_objs is not None:
-#         excute_subtasks(subtask_objs)
-#
-#     #查看子任务的状态，然后看是否要更新 定时任务表
-#     reset_cronjob_status()
 
 #将执行时间 小于 现在的时间-间隔时间 的子任务状态置为过期
 def reset_overdue_subtask(interval_time):
@@ -119,7 +56,7 @@ def reset_cronjob_status():
     cronjob_count = models.CronJob.objects.filter(enable=1,status__in=[2,3],
                                                   type__in=['timing_task','instant_task']).count()
     if cronjob_count == 0:
-        logger.info("没有运行中的定时任务")
+        logger.info("重置任务的状态时发现：除第三方调用的任务外，没有运行中的定时任务")
 
     else:
         for cronjob_obj in models.CronJob.objects.filter(enable=1,status__in=[2,3],
@@ -141,13 +78,14 @@ def reset_cronjob_status():
             #过期的任务总数
             subtask_objs_status5_count = models.Subtask.objects.filter(cronjob=cronjob_obj,
                                                                        effective_flag=1,status=5).count()
-            if subtask_objs_status5_count != 0:
+            if subtask_objs_count != 0:
                 #最近一次子任务的状态
                 last_status = models.Subtask.objects.filter(cronjob=cronjob_obj,
                                                         effective_flag=1).order_by('time_updated').last().status
-                print("last_status：",last_status)
+                logger.info("last_status："+last_status)
             else:
                 #当没有最近执行的子任务时，给last_status设个值
+                logger.error(str(cronjob_obj)+"没有子任务")
                 last_status = 10
 
             #所有子任务都过期时，定时任务状态为 已过期，已启用状态
@@ -173,21 +111,23 @@ def search_subtask_to_excuted(interval_time):
     now = datetime.datetime.now()
     #下一次轮训任务的开始时间,为配置的时间
     next_scheduler_time = now + datetime.timedelta(seconds= interval_time)
-    print("next_scheduler_time:"+str(next_scheduler_time))
+    # print("next_scheduler_time:"+str(next_scheduler_time))
     last_scheduler_time = now - datetime.timedelta(seconds= interval_time)
-    print("last_scheduler_time:"+str(last_scheduler_time))
+    # print("last_scheduler_time:"+str(last_scheduler_time))
 
 
-    number_subtasks_to_excuted = models.Subtask.objects.filter(status=1, time_excepte_excuted__range=(last_scheduler_time,next_scheduler_time)
-                                         ).count()
+    number_subtasks_to_excuted = models.Subtask.objects.filter(status=1,
+                                    time_excepte_excuted__range=(last_scheduler_time,next_scheduler_time)).count()
 
     print("number_subtasks_to_excuted:",number_subtasks_to_excuted)
+    logger.info("number_subtasks_to_excuted:"+ number_subtasks_to_excuted)
 
     if number_subtasks_to_excuted == 0:
         return None
     else:
         #返回需要执行的定时子任务的列表
-        subtask_objs = models.Subtask.objects.filter(status=1, time_excepte_excuted__range=(last_scheduler_time,next_scheduler_time)).all()
+        subtask_objs = models.Subtask.objects.filter(status=1,
+                                        time_excepte_excuted__range=(last_scheduler_time,next_scheduler_time)).all()
         return subtask_objs
 
 #重构后的执行子任务方法
@@ -202,21 +142,21 @@ def excute_subtasks_objs(subtask_objs):
             # 子任务状态更新为 执行完成
             subtask.status = '4'
             subtask.save()
-        except Exception:
+        except Exception as e:
+            logger.error("子任务"+str(subtask)+"处理失败，以下为错误信息："+e)
             subtask.status = '3'
             subtask.save()
 
 #重构后的执行子任务
 def excute_single_subtask(single_subtask):
     cronjob = single_subtask.cronjob
-    print('cronjob:'+str(cronjob))
+    logger.info('cronjob:'+str(cronjob))
     project_code = cronjob.project.project_code
-    print('project_code:'+project_code)
-    excuter = cronjob.type
+    logger.info('project_code:'+project_code)
+    # excuter = cronjob.type
 
     #根据定时任务获取相关的suites
     suite_dic = cronjob.suite_set.filter(effective_flag=1).values("suite_name")
-
 
     # 获取项目的根目录，并拼接
     suite_path = get_project_basedir(project_code) + '\\testsuites\\'
@@ -225,16 +165,8 @@ def excute_single_subtask(single_subtask):
     for i in suite_dic:
         suite_list.append(suite_path + i["suite_name"])
 
-
     #跑每个suite
     for suite in suite_list:
-        result = run_httprunnner_script(suite)
-
-
-        report_path = result['reportpath']
-        start_time = result['time']['start_datetime']
-        summary = result['stat']['testcases']
-        result_name =cronjob.job_name + '任务在' + start_time + "执行的结果"
 
         result = run_httprunnner_script(suite)
 
