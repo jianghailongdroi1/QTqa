@@ -6,6 +6,41 @@ from autotest import models
 from django.conf import settings
 from autotest import myFunctions
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.http import HttpResponseRedirect
+
+import logging
+logger = logging.getLogger('HttpRunnerManager')
+from autotest.models import Project
+import json
+from django.shortcuts import render_to_response
+
+def add_project(request):
+    if request.method == "POST":
+        data = {}
+        project_code0 = request.POST.get('project_code',None)
+        project_name0 = request.POST.get('project_name',None)
+        description0 = request.POST.get('description',None)
+        if not all ([project_code0,project_name0]):
+            data['code'] = '1001'
+            data['msg'] = '必填项为空'
+            return HttpResponse(json.dumps(data, ensure_ascii=False))
+        project_code = Project.objects.filter(project_code=project_code0)
+        if project_code.count()> 0:
+            data['code'] = '1002'
+            data['msg'] = '项目编号已存在'
+            return HttpResponse(json.dumps(data, ensure_ascii=False))
+        else:
+            new = Project(project_code=project_code0, project_name=project_name0, description=description0)
+            new.save()
+            data['code'] = '200'
+            data['msg'] = '添加成功'
+            return HttpResponse(json.dumps(data, ensure_ascii=False))
+    return render_to_response('add_project.html')
+
+
+def list(request):
+    request.method == "get"
+    return render_to_response('project_list.html')
 
 # Create your views here.
 def get_job_result_add_page(request):
