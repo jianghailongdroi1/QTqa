@@ -1,5 +1,17 @@
 from django.db import models
 import datetime
+from django.db import models
+from django.db.backends.mysql.base import DatabaseFeatures # 关键设置
+from django.db.models import DateTimeField
+DatabaseFeatures.supports_microsecond_precision = False
+
+class CreateTimeType(DateTimeField):
+    def db_type(self,connection):
+        return 'datetime DEFAULT CURRENT_TIMESTAMP'
+
+class UpdateTimeType(DateTimeField):
+    def db_type(self,connection):
+        return 'datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'
 
 
 class Project(models.Model):
@@ -8,13 +20,13 @@ class Project(models.Model):
     '''
     project_code = models.CharField(max_length=50,verbose_name="项目code",null=False,unique=True)
     project_name = models.CharField(max_length=255,verbose_name="项目名称",null=False)
-    description = models.CharField(max_length=255,verbose_name="描述")
+    description = models.CharField(max_length=255,verbose_name="描述",null=True)
 
     EFFECTIVE_CHOICES = (
         ('1', '有效'),
         ('0', '无效')
     )
-    effective_flag = models.CharField(max_length=255,choices=EFFECTIVE_CHOICES,verbose_name="是否有效",default=1)
+    effective_flag = models.CharField(max_length=255,choices=EFFECTIVE_CHOICES,verbose_name="是否有效",default=1,null=True)
     time_created = models.DateTimeField(auto_now_add=True,verbose_name='创建时间')
     time_updated = models.DateTimeField(verbose_name='更新时间',auto_now=True)
 
@@ -57,7 +69,7 @@ class CronJob(models.Model):
         ('5', '过期任务')
     )
     status = models.CharField(max_length=255,choices=STATUS_CHOICES,verbose_name="执行结果",null=False,default='1')
-    description = models.CharField(max_length=255,verbose_name="描述/备注")
+    description = models.CharField(max_length=255,verbose_name="描述/备注",null = False)
     ENABLE_CHOICES = (
         ('0', '未启用'),
         ('1', '已启用'),
@@ -97,7 +109,7 @@ class Subtask(models.Model):
         ('4', '执行完成'),
         ('5', '过期任务')
     )
-    status = models.CharField(max_length=5,choices=STATUS_CHOICES,verbose_name="执行结果",default=1)
+    status = models.CharField(max_length=5,choices=STATUS_CHOICES,verbose_name="执行结果",null=False,default=1)
 
     EFFECTIVE_CHOICES = (
         ('1', '有效'),
@@ -147,13 +159,13 @@ class suite(models.Model):
     project = models.ForeignKey("Project", on_delete=models.CASCADE,verbose_name='关联项目',null=False)
     cronjob=models.ManyToManyField(to="CronJob",blank=True,db_constraint = False)
 
-    description = models.CharField(max_length=255,verbose_name="描述")
+    description = models.CharField(max_length=255,verbose_name="描述",null=False)
 
     EFFECTIVE_CHOICES = (
         ('1', '有效'),
         ('0', '无效')
     )
-    effective_flag = models.CharField(max_length=10,choices=EFFECTIVE_CHOICES,verbose_name="是否有效",default=1)
+    effective_flag = models.CharField(max_length=10,choices=EFFECTIVE_CHOICES,verbose_name="是否有效",default=1,null=False)
     time_created = models.DateTimeField(auto_now_add=True,verbose_name='创建时间')
     time_updated = models.DateTimeField(verbose_name='更新时间',auto_now=True)
 
