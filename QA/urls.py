@@ -24,6 +24,8 @@ from apscheduler.scheduler import Scheduler
 from autotest.myFunctions import scheduler_task_in_startupItems
 from django.conf import settings
 
+from django.views.generic import RedirectView
+
 #添加启动项
 sched = Scheduler()  # 实例化，固定格式
 @sched.interval_schedule(seconds=settings.SCHEDULED_TASKS_RUN_SETTINGS['interval_time'])  # 装饰器，并设置执行间隔时间，以秒为单位
@@ -57,4 +59,6 @@ urlpatterns = [
     # 对外提供的执行冒烟测试的接口
     url(r'^excute_job_by_thirdParty/(?P<project_code>.*)$', views.excute_job_by_thirdParty,
         name='excute_job_by_thirdParty'),
+    path('add_project/', views.add_project),
+    path('project_list/', views.list),
 ]
