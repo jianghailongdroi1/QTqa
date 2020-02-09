@@ -55,13 +55,28 @@ urlpatterns = [
     url(r'^test/', views.test_function),
     # 调试用，执行subtask表中所有子任务
     url(r'^excute_subtasks', views.excute_all_subtasks),
+
     # 对外提供的执行冒烟测试的接口
     url(r'^excute_job_by_thirdParty/(?P<project_code>.*)$', views.excute_job_by_thirdParty,
         name='excute_job_by_thirdParty'),
+
+    #新建项目
     path('add_project/', views.add_project),
+    #项目列表展示
     path('project_list/', views.list),
-    # 调试用新建定时任务的接口
+
+    # 新建任务的接口
     url(r'^create_job/$', views.create_job),
+    # 编辑任务的接口
+    url(r'^edit_job/$', views.edit_job),
+    # 编辑任务的接口
+    url(r'^delete_job/$', views.delete_job),
+
+    # 启动任务，创建对应的子任务
+    url(r'^enable_job/$', views.enable_job),
+    # 暂停任务
+    url(r'^unenable_job/$', views.unenable_job),
+
     # 新建suite的接口
     url(r'^create_suite/$', views.add_suite),
     # 编辑suite的接口
