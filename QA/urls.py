@@ -40,7 +40,6 @@ urlpatterns = [
 
     url(r'^job_result_add/$', views.job_result_add, name='job_result_add'),
     url(r'^query_job_result/$', views.job_result_select, name='query_job_result'),
-    # url(r'^query_job_result/$', views.job_result_select, name='query_job_result'),
 
     #调试用新建定时任务的接口
     url(r'^create_cron_job/$', views.create_cron_job, name='create_cron_job'),
@@ -61,4 +60,14 @@ urlpatterns = [
         name='excute_job_by_thirdParty'),
     path('add_project/', views.add_project),
     path('project_list/', views.list),
+    # 调试用新建定时任务的接口
+    url(r'^create_job/$', views.create_job),
+    # 新建suite的接口
+    url(r'^create_suite/$', views.add_suite),
+    # 编辑suite的接口
+    url(r'^delete_suite/$', views.delete_suite),
+    # 编辑suite的接口
+    url(r'^edit_suite/$', views.edit_suite),
+    # # 编辑suite的接口
+    # url(r'^query_suites/$', views.query_suites),
 ]
