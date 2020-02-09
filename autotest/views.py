@@ -1,4 +1,4 @@
-import datetime
+import datetime,json
 
 from django.shortcuts import render
 from django.http import HttpResponse,request
@@ -196,3 +196,466 @@ def excute_all_subtasks(request):
 #重构外部冒烟测试接口
 def excute_job_by_thirdParty(request,project_code):
     return myFunctions.create_new_subtask(project_code)
+
+#新建job
+def create_job(request):
+    data = {'code':200,"msg":'success'}
+    if request.method == 'POST':
+
+        # 获取入参
+        project_id = request.POST.get('project_id',None)
+        job_name = request.POST.get('job_name',None)
+        suite_list = request.POST.get('suite_list',None)
+        description = request.POST.get('description',None)
+        job_type = request.POST.get('job_type',None)
+
+        #传入的suite_list是str格式，需进行转化
+        if suite_list is not None:
+            new_suite_list = [];
+
+            for n in  suite_list[1:-1].split(','):
+                new_suite_list.append(int(n));
+
+            suite_list = new_suite_list;
+
+        #校验
+        if not all ([project_id,job_name,job_type]):
+            data['code'] = '1001'
+            data['msg'] = '必填项为空'
+            return HttpResponse(json.dumps(data, ensure_ascii=False))
+        project_objs = Project.objects.filter(id=project_id)
+        if project_objs.count() == 0:
+            data['code'] = '1002'
+            data['msg'] = '项目不已存在'
+            return HttpResponse(json.dumps(data, ensure_ascii=False))
+        #校验suite_id是否存在
+        if suite_list !=None:
+            for i in suite_list:
+                if models.suite.objects.filter(id = i,effective_flag= 1).count() == 0:
+                    data['code'] = '1003'
+                    data['msg'] = models.suite.objects.filter(id = i).value('suite_name') +'不存在'
+                    return HttpResponse(json.dumps(data, ensure_ascii=False))
+
+        if job_type in ('timing_task','instant_task','called_task'):
+
+            if job_type == 'timing_task':
+                # 获取入参
+                time_start_excute = request.POST.get('time_start_excute', None)
+                iterval_time = request.POST.get('iterval_time', None)
+                maximum_times = request.POST.get('maximum_times', None)
+                # 校验
+                if not all([time_start_excute, iterval_time, maximum_times]):
+                    data['code'] = '1001'
+                    data['msg'] = '必填项为空'
+                    return HttpResponse(json.dumps(data, ensure_ascii=False))
+                #新建job
+                obj = models.CronJob.objects.create(project = project_objs.first(),
+                                              job_name = job_name,description=description,
+                                              type = job_type,iterval_time = iterval_time,maximum_times =maximum_times,
+                                                time_start_excute = time_start_excute
+                                                    )
+                #job和suite关联
+                if suite_list != None:
+                    obj.suite_set.set(suite_list)
+
+                return HttpResponse(json.dumps(data, ensure_ascii=False))
+
+            else:
+                # 新建job
+                obj = models.CronJob.objects.create(project = project_objs.first(),
+                                              job_name = job_name,description=description,
+                                              type = job_type)
+                # job和suite关联
+                if suite_list != None:
+                    obj.suite_set.set(suite_list)
+        else:
+            data['code'] = 400
+            data['msg'] = '应为post请求'
+
+    return HttpResponse(json.dumps(data))
+
+#编辑job
+def edit_job(request):
+    data = {'code':200,"msg":'success'}
+    if request.method == 'POST':
+
+        # 获取入参
+        job_id = request.POST.get('job_id',None)
+        job_type = request.POST.get('job_type',None)
+
+        project_id = request.POST.get('project_id',None)
+        job_name = request.POST.get('job_name',None)
+        suite_list = request.POST.get('suite_list',None)
+        description = request.POST.get('description',None)
+
+
+
+        #传入的suite_list是str格式，需进行转化
+        if suite_list is not None:
+            new_suite_list = [];
+
+            for n in  suite_list[1:-1].split(','):
+                new_suite_list.append(int(n));
+
+            suite_list = new_suite_list;
+
+        #校验
+        if not all ([job_id,project_id,job_name,job_type]):
+            data['code'] = '1001'
+            data['msg'] = '必填项为空'
+            return HttpResponse(json.dumps(data, ensure_ascii=False))
+
+        job_obj = models.CronJob.objects.filter(id = job_id,effective_flag=1)
+        if job_obj.count()  == 0:
+            data['code'] = '1002'
+            data['msg'] = '任务不存在或已删除'
+            return HttpResponse(json.dumps(data, ensure_ascii=False))
+
+
+        project_objs = Project.objects.filter(id=project_id)
+        if project_objs.count() == 0:
+            data['code'] = '1002'
+            data['msg'] = '项目不已存在'
+            return HttpResponse(json.dumps(data, ensure_ascii=False))
+        #校验suite_id是否存在
+        if suite_list !=None:
+            for i in suite_list:
+                if models.suite.objects.filter(id = i,effective_flag= 1).count() == 0:
+                    data['code'] = '1003'
+                    data['msg'] = models.suite.objects.filter(id = i).value('suite_name') +'不存在'
+                    return HttpResponse(json.dumps(data, ensure_ascii=False))
+
+        if job_type in ('timing_task','instant_task','called_task'):
+
+            if job_type == 'timing_task':
+                # 获取入参
+                time_start_excute = request.POST.get('time_start_excute', None)
+                iterval_time = request.POST.get('iterval_time', None)
+                maximum_times = request.POST.get('maximum_times', None)
+                # 校验
+                if not all([time_start_excute, iterval_time, maximum_times]):
+                    data['code'] = '1001'
+                    data['msg'] = '必填项为空'
+                    return HttpResponse(json.dumps(data, ensure_ascii=False))
+                #更新job
+                models.CronJob.objects.filter(id =job_id).update(project = project_objs.first(),
+                                              job_name = job_name,description=description,
+                                              type = job_type,iterval_time = iterval_time,maximum_times =maximum_times,
+                                                time_start_excute = time_start_excute,
+                                                time_updated = datetime.datetime.now())
+            else:
+                #更新job
+                models.CronJob.objects.filter(id =job_id).update(project = project_objs.first(),
+                                              job_name = job_name,description=description,
+                                              type = job_type,time_updated = datetime.datetime.now(),
+                                              iterval_time=0, maximum_times=0,time_start_excute = None)
+            #job和suite关联
+            if suite_list != None:
+                job_obj.first().suite_set.set(suite_list)
+            else:
+                job_obj.first().suite_set.set([])
+        else:
+            ata['code'] = 1004
+            data['msg'] = 'job_type错误！'
+    else:
+        data['code'] = 400
+        data['msg'] = '应为post请求'
+
+    return HttpResponse(json.dumps(data))
+
+#删除job
+def delete_job(request):
+    data = {'code':200,"msg":'success'}
+    if request.method == 'POST':
+
+        # 获取入参
+        job_id = request.POST.get('job_id',None)
+
+        #校验
+        job_obj = models.CronJob.objects.filter(id = job_id,effective_flag=1)
+        if job_obj.count()  == 0:
+            data['code'] = '1001'
+            data['msg'] = '任务不存在或已删除'
+            return HttpResponse(json.dumps(data, ensure_ascii=False))
+
+        #更新job
+        models.CronJob.objects.filter(id =job_id).update(effective_flag =0,
+                                        time_updated = datetime.datetime.now())
+
+    else:
+        data['code'] = 400
+        data['msg'] = '应为post请求'
+
+    return HttpResponse(json.dumps(data))
+
+#启动任务,新建子任务
+def enable_job(request):
+    if request.method == "POST":
+        data={}
+        # 获取入参
+        job_id = request.POST.get('job_id',None)
+
+        #校验
+        if not  job_id:
+            data['code'] = '1001'
+            data['msg'] = 'job_id不能为空'
+            return HttpResponse(json.dumps(data, ensure_ascii=False))
+
+        job_obj = models.CronJob.objects.filter(id=job_id).first()
+
+        if job_obj.effective_flag == '0':
+            data['code'] = '1002'
+            data['msg'] = '当前任务已被删除，不能启用'
+            return HttpResponse(json.dumps(data, ensure_ascii=False))
+        if job_obj.enable == '1':
+            data['code'] = '1003'
+            data['msg'] = '当前任务已被启用，不能重复启用'
+            return HttpResponse(json.dumps(data, ensure_ascii=False))
+
+        job_type = job_obj.type
+
+        if job_type == 'called_task':
+            if job_obj.enable == '0':
+                models.CronJob.objects.filter(id=job_id,effective_flag=1).update(enable=1, status=2
+                                                                                 ,time_updated=datetime.datetime.now())
+
+                data['code'] = '200'
+                data['msg'] = '第三方调用任务启动成功'
+
+                #给出返回值
+                return HttpResponse(json.dumps(data, ensure_ascii=False))
+            else:
+                models.CronJob.objects.filter(id=job_id ,effective_flag=1).update(enable=1,time_updated=datetime.datetime.now())
+                data['code'] = '200'
+                data['msg'] = '第三方调用任务恢复启动状态'
+                #给出返回值
+                return HttpResponse(json.dumps(data, ensure_ascii=False))
+
+        if job_type == 'timing_task':
+            if job_obj.enable == '0':
+                #获取任务详细信息
+                time_start_excute = job_obj.time_start_excute
+                iterval_time = job_obj.iterval_time
+                maximum_times = job_obj.maximum_times
+
+                #计算每个子任务执行时间
+                for i in range(1,maximum_times + 1 ):
+                    excute_time = time_start_excute + datetime.timedelta(minutes= iterval_time * i)
+                    # 在子任务表中插入数据
+                    models.Subtask.objects.create(cronjob=job_obj, time_excepte_excuted=excute_time.strftime("%Y-%m-%d %H:%M:%S"))
+
+                #更新定时任务表的状态
+                models.CronJob.objects.filter(id=job_id).update(enable = 1,status = 2,time_updated=datetime.datetime.now())
+
+                data['code'] = '200'
+                data['msg'] = '定时任务启动成功'
+
+                #给出返回值
+                return HttpResponse(json.dumps(data, ensure_ascii=False))
+            else:
+                # 更新定时任务表的状态
+                models.CronJob.objects.filter(id=job_id).update(enable=1,time_updated=datetime.datetime.now())
+
+                data['code'] = '200'
+                data['msg'] = '定时任务恢复启动状态'
+
+                #给出返回值
+                return HttpResponse(json.dumps(data, ensure_ascii=False))
+        if job_type == 'instant_task':
+            if job_obj.enable == '0':
+                #获取任务详细信息
+                time_start_excute = job_obj.time_start_excute
+
+                # 在子任务表中插入数据
+                models.Subtask.objects.create(cronjob=job_obj, time_excepte_excuted=datetime.datetime.now())
+
+                #更新定时任务表的状态
+                models.CronJob.objects.filter(id=job_id).update(enable = 1,status = 2,time_updated=datetime.datetime.now())
+
+                data['code'] = '200'
+                data['msg'] = '即时任务启动成功'
+                #给出返回值
+                return HttpResponse(json.dumps(data, ensure_ascii=False))
+            else:
+                # 更新定时任务表的状态
+                models.CronJob.objects.filter(id=job_id).update(enable=1,time_updated=datetime.datetime.now())
+
+                data['code'] = '200'
+                data['msg'] = '即时任务恢复启动状态'
+
+                #给出返回值
+                return HttpResponse(json.dumps(data, ensure_ascii=False))
+
+#暂停任务,仅将enable置为2
+def unenable_job(request):
+    if request.method == "POST":
+        data={}
+        # 获取入参
+        job_id = request.POST.get('job_id',None)
+
+        #校验
+        if not  job_id:
+            data['code'] = '1001'
+            data['msg'] = 'job_id不能为空'
+            return HttpResponse(json.dumps(data, ensure_ascii=False))
+
+        job_obj = models.CronJob.objects.filter(id=job_id).first()
+
+        if job_obj.effective_flag == '0':
+            data['code'] = '1002'
+            data['msg'] = '当前任务已被删除，不能暂停'
+            return HttpResponse(json.dumps(data, ensure_ascii=False))
+        if job_obj.enable != '1':
+            data['code'] = '1003'
+            data['msg'] = '当前任务不是启用状态，不能暂停'
+            return HttpResponse(json.dumps(data, ensure_ascii=False))
+
+        # 更新定时任务表的状态
+        models.CronJob.objects.filter(id=job_id).update(enable=2, time_updated=datetime.datetime.now())
+
+        data['code'] = '200'
+        data['msg'] = '任务已暂停！'
+
+        return HttpResponse(json.dumps(data, ensure_ascii=False))
+
+
+
+#新建suite
+def add_suite(request):
+    if request.method == "POST":
+        data = {}
+        project_id = request.POST.get('project_id',None)
+        suite_name = request.POST.get('suite_name',None)
+        description = request.POST.get('description',None)
+        if not all ([project_id,suite_name]):
+            data['code'] = '1001'
+            data['msg'] = '必填项为空'
+            return HttpResponse(json.dumps(data, ensure_ascii=False))
+        project_obj = Project.objects.filter(id=project_id)
+        if project_obj.count() == 0:
+            data['code'] = '1002'
+            data['msg'] = '项目不存在'
+            return HttpResponse(json.dumps(data, ensure_ascii=False))
+        else:
+            suite_obj = models.suite(project_id=project_id, suite_name=suite_name, description=description)
+            suite_obj.save()
+            data['code'] = '200'
+            data['msg'] = '添加成功'
+            return HttpResponse(json.dumps(data, ensure_ascii=False))
+    else:
+        data = {'code':400,'msg':"请求方式有误"}
+        return HttpResponse(json.dumps(data, ensure_ascii=False))
+
+#删suite
+def delete_suite(request):
+    if request.method == "POST":
+        data = {}
+        suite_id = request.POST.get('suite_id',None)
+
+        suite_count = models.suite.objects.filter(id = suite_id).count()
+        if suite_count ==0:
+            data['code'] = '1001'
+            data['msg'] = 'suite不存在'
+            return HttpResponse(json.dumps(data, ensure_ascii=False))
+
+        else:
+            models.suite.objects.filter(id =suite_id).update(effective_flag = 0,time_updated = datetime.datetime.now()
+                                                             )
+
+            data['code'] = '200'
+            data['msg'] = '删除成功'
+            return HttpResponse(json.dumps(data, ensure_ascii=False))
+    else:
+        data = {'code':400,'msg':"请求方式有误"}
+        return HttpResponse(json.dumps(data, ensure_ascii=False))
+
+#编辑suite
+def edit_suite(request):
+    if request.method == "POST":
+        data = {}
+        suite_id = request.POST.get('suite_id',None)
+        project_id = request.POST.get('project_id',None)
+        suite_name = request.POST.get('suite_name',None)
+        description = request.POST.get('description',None)
+        if not all ([suite_id,project_id,suite_name]):
+            data['code'] = '1001'
+            data['msg'] = '必填项为空'
+            return HttpResponse(json.dumps(data, ensure_ascii=False))
+        suite_count = models.suite.objects.filter(id = suite_id).count()
+        if suite_count ==0:
+            data['code'] = '1002'
+            data['msg'] = 'suite不存在'
+            return HttpResponse(json.dumps(data, ensure_ascii=False))
+
+        project_obj = Project.objects.filter(id=project_id)
+        if project_obj.count() == 0:
+            data['code'] = '1003'
+            data['msg'] = '项目不存在'
+            return HttpResponse(json.dumps(data, ensure_ascii=False))
+        else:
+            models.suite.objects.filter(id =suite_id).update(project_id=project_id, suite_name=suite_name,
+                                     description=description,time_updated = datetime.datetime.now()
+                                                             )
+
+            data['code'] = '200'
+            data['msg'] = '修改成功'
+            return HttpResponse(json.dumps(data, ensure_ascii=False))
+    else:
+        data = {'code':400,'msg':"请求方式有误"}
+        return HttpResponse(json.dumps(data, ensure_ascii=False))
+
+
+
+# #查询suite
+# def query_suites(request,pagenum=1):
+#     suite_list = models.suite.objects.all().values('suite_name','project_id','project__project_name','description','time_created','time_updated')#查看所有的数据
+#     paginator = Paginator(suite_list, 10)  # 这里的book_list必须是一个集合对象，把所有的书分页，一页有10个
+#     print("count:",paginator.count)           #数据总数
+#     print("num_pages",paginator.num_pages)    #总页数
+#     page_range= paginator.page_range  #页码的列表
+#     # page1=paginator.page(1) #第1页的page对象
+#     # for i in page1:         #遍历第1页的所有数据对象
+#     #     print(i)
+#     print(paginator.page(1).object_list)  # 第1页的所有数据
+#     page = request.GET.get('page', pagenum)
+#     currentPage = int(page)
+#
+#     #  如果页数十分多时，换另外一种显示方式
+#     if paginator.num_pages>30:
+#
+#         if currentPage-5<1:
+#             page_range=range(1,11)
+#         elif currentPage+5>paginator.num_pages:
+#             page_range=range(currentPage-5,paginator.num_pages+1)
+#
+#         else:
+#             page_range=range(currentPage-5,currentPage+5)
+#     else:
+#         page_range=paginator.page_range
+#
+#     try:
+#         print(page)
+#         suite_list = paginator.page(page)
+#     except PageNotAnInteger:
+#         suite_list = paginator.page(1)
+#     except EmptyPage:
+#         suite_list = paginator.page(paginator.num_pages)
+#
+#     data = {'result_list':suite_list}
+#     data1 = {'result_list':suite_list,"paginator":paginator,"currentPage":currentPage,"page_range":page_range}
+#     # return render(request,"job_result_page1.0.html",data1)
+#     return HttpResponse(json.dumps(data, ensure_ascii=False,cls=MyEncoder))
+#
+#
+# class MyEncoder(json.JSONEncoder):
+#
+#     def default(self, obj):
+#         """
+#         只要检查到了是bytes类型的数据就把它转为str类型
+#         :param obj:
+#         :return:
+#         """
+#         if isinstance(obj, bytes):
+#             return str(obj, encoding='utf-8')
+#         return json.JSONEncoder.default(self, obj)
+
