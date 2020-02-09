@@ -120,7 +120,7 @@ def search_subtask_to_excuted(interval_time):
                                     time_excepte_excuted__range=(last_scheduler_time,next_scheduler_time)).count()
 
     print("number_subtasks_to_excuted:",number_subtasks_to_excuted)
-    logger.info("number_subtasks_to_excuted:"+ number_subtasks_to_excuted)
+    logger.info("number_subtasks_to_excuted:%d"%(number_subtasks_to_excuted))
 
     if number_subtasks_to_excuted == 0:
         return None
