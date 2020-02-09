@@ -69,7 +69,7 @@ class CronJob(models.Model):
         ('5', '过期任务')
     )
     status = models.CharField(max_length=255,choices=STATUS_CHOICES,verbose_name="执行结果",null=False,default='1')
-    description = models.CharField(max_length=255,verbose_name="描述/备注",null = False)
+    description = models.CharField(max_length=255,verbose_name="描述/备注",null = True)
     ENABLE_CHOICES = (
         ('0', '未启用'),
         ('1', '已启用'),
@@ -159,7 +159,7 @@ class suite(models.Model):
     project = models.ForeignKey("Project", on_delete=models.CASCADE,verbose_name='关联项目',null=False)
     cronjob=models.ManyToManyField(to="CronJob",blank=True,db_constraint = False)
 
-    description = models.CharField(max_length=255,verbose_name="描述",null=False)
+    description = models.CharField(max_length=255,verbose_name="描述",null=True)
 
     EFFECTIVE_CHOICES = (
         ('1', '有效'),
