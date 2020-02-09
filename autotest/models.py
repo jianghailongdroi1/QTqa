@@ -47,7 +47,7 @@ class CronJob(models.Model):
     job_name = models.CharField(max_length=255,verbose_name="job名称",null=False)
 
     #仅执行一次时，填写 开始执行时间,最大执行次数填 1
-    time_start_excute = models.DateTimeField(default=datetime.datetime.now,verbose_name='开始执行时间')
+    time_start_excute = models.DateTimeField(verbose_name='开始执行时间',null=True)
 
     iterval_time = models.IntegerField(default=0,verbose_name='间隔时间(单位:分钟)')
 
