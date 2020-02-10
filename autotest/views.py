@@ -269,8 +269,7 @@ def create_job(request):
                 if suite_list != None:
                     obj.suite_set.set(suite_list)
         else:
-            data['code'] = 400
-            data['msg'] = '应为post请求'
+            return render_to_response('add_task.html')
 
     return HttpResponse(json.dumps(data))
 
@@ -358,8 +357,7 @@ def edit_job(request):
             ata['code'] = 1004
             data['msg'] = 'job_type错误！'
     else:
-        data['code'] = 400
-        data['msg'] = '应为post请求'
+        return render_to_response('add_task.html')
 
     return HttpResponse(json.dumps(data))
 
@@ -383,8 +381,7 @@ def delete_job(request):
                                         time_updated = datetime.datetime.now())
 
     else:
-        data['code'] = 400
-        data['msg'] = '应为post请求'
+        return render_to_response('add_task.html')
 
     return HttpResponse(json.dumps(data))
 
@@ -543,8 +540,7 @@ def add_suite(request):
             data['msg'] = '添加成功'
             return HttpResponse(json.dumps(data, ensure_ascii=False))
     else:
-        data = {'code':400,'msg':"请求方式有误"}
-        return HttpResponse(json.dumps(data, ensure_ascii=False))
+        return render_to_response('add_suite.html')
 
 #删suite
 def delete_suite(request):
@@ -566,8 +562,7 @@ def delete_suite(request):
             data['msg'] = '删除成功'
             return HttpResponse(json.dumps(data, ensure_ascii=False))
     else:
-        data = {'code':400,'msg':"请求方式有误"}
-        return HttpResponse(json.dumps(data, ensure_ascii=False))
+        return render_to_response('add_suite.html')
 
 #编辑suite
 def edit_suite(request):
@@ -601,61 +596,62 @@ def edit_suite(request):
             data['msg'] = '修改成功'
             return HttpResponse(json.dumps(data, ensure_ascii=False))
     else:
-        data = {'code':400,'msg':"请求方式有误"}
-        return HttpResponse(json.dumps(data, ensure_ascii=False))
+        return render_to_response('add_suite.html')
 
 
 
-# #查询suite
-# def query_suites(request,pagenum=1):
-#     suite_list = models.suite.objects.all().values('suite_name','project_id','project__project_name','description','time_created','time_updated')#查看所有的数据
-#     paginator = Paginator(suite_list, 10)  # 这里的book_list必须是一个集合对象，把所有的书分页，一页有10个
-#     print("count:",paginator.count)           #数据总数
-#     print("num_pages",paginator.num_pages)    #总页数
-#     page_range= paginator.page_range  #页码的列表
-#     # page1=paginator.page(1) #第1页的page对象
-#     # for i in page1:         #遍历第1页的所有数据对象
-#     #     print(i)
-#     print(paginator.page(1).object_list)  # 第1页的所有数据
-#     page = request.GET.get('page', pagenum)
-#     currentPage = int(page)
-#
-#     #  如果页数十分多时，换另外一种显示方式
-#     if paginator.num_pages>30:
-#
-#         if currentPage-5<1:
-#             page_range=range(1,11)
-#         elif currentPage+5>paginator.num_pages:
-#             page_range=range(currentPage-5,paginator.num_pages+1)
-#
-#         else:
-#             page_range=range(currentPage-5,currentPage+5)
-#     else:
-#         page_range=paginator.page_range
-#
-#     try:
-#         print(page)
-#         suite_list = paginator.page(page)
-#     except PageNotAnInteger:
-#         suite_list = paginator.page(1)
-#     except EmptyPage:
-#         suite_list = paginator.page(paginator.num_pages)
-#
-#     data = {'result_list':suite_list}
-#     data1 = {'result_list':suite_list,"paginator":paginator,"currentPage":currentPage,"page_range":page_range}
-#     # return render(request,"job_result_page1.0.html",data1)
-#     return HttpResponse(json.dumps(data, ensure_ascii=False,cls=MyEncoder))
-#
-#
-# class MyEncoder(json.JSONEncoder):
-#
-#     def default(self, obj):
-#         """
-#         只要检查到了是bytes类型的数据就把它转为str类型
-#         :param obj:
-#         :return:
-#         """
-#         if isinstance(obj, bytes):
-#             return str(obj, encoding='utf-8')
-#         return json.JSONEncoder.default(self, obj)
+#查询suite
+def query_suites(request,pagenum=1):
+    suite_list = models.suite.objects.all().values('id','suite_name','project_id','project__project_name',
+                                                   'description','time_created','time_updated')#查看所有的数据
+
+    paginator = Paginator(suite_list, 10)  # 这里的book_list必须是一个集合对象，把所有的书分页，一页有10个
+    print("count:",paginator.count)           #数据总数
+    print("num_pages",paginator.num_pages)    #总页数
+    page_range= paginator.page_range  #页码的列表
+    # page1=paginator.page(1) #第1页的page对象
+    # for i in page1:         #遍历第1页的所有数据对象
+    #     print(i)
+    print(paginator.page(1).object_list)  # 第1页的所有数据
+    page = request.GET.get('page', pagenum)
+    currentPage = int(page)
+
+    #  如果页数十分多时，换另外一种显示方式
+    if paginator.num_pages>30:
+
+        if currentPage-5<1:
+            page_range=range(1,11)
+        elif currentPage+5>paginator.num_pages:
+            page_range=range(currentPage-5,paginator.num_pages+1)
+
+        else:
+            page_range=range(currentPage-5,currentPage+5)
+    else:
+        page_range=paginator.page_range
+
+    try:
+        print(page)
+        suite_list = paginator.page(page)
+    except PageNotAnInteger:
+        suite_list = paginator.page(1)
+    except EmptyPage:
+        suite_list = paginator.page(paginator.num_pages)
+
+    data = {'result_list':suite_list}
+    data1 = {'result_list':suite_list,"paginator":paginator,"currentPage":currentPage,"page_range":page_range}
+    # return render(request,"job_result_page1.0.html",data1)
+    return HttpResponse(json.dumps(data, ensure_ascii=False,cls=MyEncoder))
+
+
+class MyEncoder(json.JSONEncoder):
+
+    def default(self, obj):
+        """
+        只要检查到了是bytes类型的数据就把它转为str类型
+        :param obj:
+        :return:
+        """
+        if isinstance(obj, bytes):
+            return str(obj, encoding='utf-8')
+        return json.JSONEncoder.default(self, obj)
 
