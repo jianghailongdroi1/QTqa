@@ -562,7 +562,7 @@ def delete_suite(request):
             data['msg'] = '删除成功'
             return HttpResponse(json.dumps(data, ensure_ascii=False))
     else:
-        return render_to_response('add_suite.html')
+        return render_to_response('suite_list.html')
 
 #编辑suite
 def edit_suite(request):
@@ -596,7 +596,7 @@ def edit_suite(request):
             data['msg'] = '修改成功'
             return HttpResponse(json.dumps(data, ensure_ascii=False))
     else:
-        return render_to_response('add_suite.html')
+        return render_to_response('suite_list.html')
 
 
 
