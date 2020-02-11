@@ -70,8 +70,12 @@ urlpatterns = [
     url(r'^create_job/$', views.create_job),
     # 编辑任务的接口
     url(r'^edit_job/$', views.edit_job),
-    # 编辑任务的接口
+    # 删除任务的接口
     url(r'^delete_job/$', views.delete_job),
+    #查询job
+    url(r'^query_jobs/$', views.query_jobs),
+    # 查询job_detail
+    url(r'^query_job_detail/$', views.query_job_detail),
 
     # 启动任务，创建对应的子任务
     url(r'^enable_job/$', views.enable_job),
