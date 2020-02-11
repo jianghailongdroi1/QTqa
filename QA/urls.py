@@ -65,6 +65,8 @@ urlpatterns = [
     path('add_project/', views.add_project),
     #项目列表展示
     path('project_list/', views.list),
+    #项目查询接口
+    url(r'^SearchForProject/$', views.SearchForProject),
 
     # 新建任务的接口
     url(r'^create_job/$', views.create_job),
@@ -88,6 +90,6 @@ urlpatterns = [
     url(r'^delete_suite/$', views.delete_suite),
     # 编辑suite的接口
     url(r'^edit_suite/$', views.edit_suite),
-    # # 编辑suite的接口
-    # url(r'^query_suites/$', views.query_suites),
+    #查询suite接口
+    url(r'^SearchForSuite/$', views.SearchForSuite)
 ]

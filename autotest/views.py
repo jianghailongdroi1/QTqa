@@ -1,7 +1,7 @@
 import datetime
 
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from autotest import models
 from django.conf import settings
 from autotest import myFunctions
@@ -695,6 +695,45 @@ def edit_suite(request):
     else:
         return render_to_response('suite_list.html')
 
+#查询项目
+def SearchForProject(request):
+    if request.method == "GET":
+        projects = []
+        query_pro = Project.objects.all()
+        for pro in query_pro:
+            projects.append({
+                "project_code": pro.project_code,
+                "project_name": pro.project_name,
+                "description": pro.description,
+                "time_created": str(pro.time_created),
+            })
+        return JsonResponse(
+            {
+                "all_projects":projects,
+                "msg": "success",
+                "status":200
+            }
+        )
+
+#查询suite
+def SearchForSuite(request):
+    if request.method == "GET":
+        suites = []
+        query_sui = models.suite.objects.all()
+        for sui in query_sui:
+            suites.append({
+                "suite_name": sui.suite_name,
+                "project_id": sui.project_id,
+                "description": sui.description,
+                "time_created": str(sui.time_created),
+            })
+        return JsonResponse(
+            {
+                "all_suites":suites,
+                "msg": "success",
+                "status":200
+            }
+        )
 
 #查询 执行结果
 def query_job_results(request):
