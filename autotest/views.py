@@ -353,7 +353,7 @@ def edit_job(request):
             else:
                 job_obj.first().suite_set.set([])
         else:
-            ata['code'] = 1004
+            data['code'] = 1004
             data['msg'] = 'job_type错误！'
     else:
         return render_to_response('add_task.html')
@@ -696,60 +696,71 @@ def edit_suite(request):
         return render_to_response('suite_list.html')
 
 
+#查询 执行结果
+def query_job_results(request):
+    if request.method == 'POST':
+        data = {}
+        #获取数据
+        #关于查询的入参
+        project_id = request.POST.get('project_id',None)
 
-# #查询suite
-# def query_suites(request,pagenum=1):
-#     suite_list = models.suite.objects.all().values('id','suite_name','project_id','project__project_name',
-#                                                    'description','time_created','time_updated')#查看所有的数据
-#
+        #关于分页
+        #当前页码
+        current_page = request.POST.get('current_page','1')
+        #每页的数据量
+        perPageItemNum = request.POST.get('perPageItemNum','10')
 
-    # paginator = Paginator(suite_list, 10)  # 这里的book_list必须是一个集合对象，把所有的书分页，一页有10个
-    # print("count:",paginator.count)           #数据总数
-    # print("num_pages",paginator.num_pages)    #总页数
-    # page_range= paginator.page_range  #页码的列表
-    # # page1=paginator.page(1) #第1页的page对象
-    # # for i in page1:         #遍历第1页的所有数据对象
-    # #     print(i)
-    # print(paginator.page(1).object_list)  # 第1页的所有数据
-    # page = request.GET.get('page', pagenum)
-    # currentPage = int(page)
-    #
-    # #  如果页数十分多时，换另外一种显示方式
-    # if paginator.num_pages>30:
-    #
-    #     if currentPage-5<1:
-    #         page_range=range(1,11)
-    #     elif currentPage+5>paginator.num_pages:
-    #         page_range=range(currentPage-5,paginator.num_pages+1)
-    #
-    #     else:
-    #         page_range=range(currentPage-5,currentPage+5)
-    # else:
-    #     page_range=paginator.page_range
-    #
-    # try:
-    #     print(page)
-    #     suite_list = paginator.page(page)
-    # except PageNotAnInteger:
-    #     suite_list = paginator.page(1)
-    # except EmptyPage:
-    #     suite_list = paginator.page(paginator.num_pages)
-    #
-    # data = {'result_list':suite_list}
-    # data1 = {'result_list':suite_list,"paginator":paginator,"currentPage":currentPage,"page_range":page_range}
-    # # return render(request,"job_result_page1.0.html",data1)
-    # return HttpResponse(json.dumps(data, ensure_ascii=False,cls=MyEncoder))
+        #查询数据
+        job_objs=None
+        if  project_id != None:
+            project_objs = Project.objects.filter(id=project_id)
+            if project_objs.count() == 0:
+                data['code'] = '1001'
+                data['msg'] = '项目不存在'
+                return HttpResponse(json.dumps(data, ensure_ascii=False))
+
+            job_objs = models.CronJob.objects.filter(project_id=project_id, effective_flag=1)
+
+        else:
+            job_objs = models.CronJob.objects.filter( effective_flag=1)
+
+        # 查询总数据量
+        count = job_objs.count()
+        # print('=============count:',count)
+        # 查询具体数据
+        job_list = job_objs.values('id','project_id','project__project_name',
+                                   'job_name','time_start_excute','iterval_time',
+                                   'maximum_times','type','status','description',
+                                   'enable','time_created','time_updated')
+        # print('=============job_list:',job_list)
+        jobs = []
+        for job in job_list:
+            jobs.append(job)
+        # print("==============jobs:",jobs)
+
+        #分页
+        from autotest.myUtil.pager import Pagination
+
+        page_obj = Pagination(count, current_page,perPageItemNum)
+
+        data_list = jobs[int(page_obj.start()) : int(page_obj.end()) ]
+
+        from autotest.myUtil.commonFunction import turn_dic_to_be_JSON_serializable
+        # print("data_list:",data_list)
+        for dic in data_list:
+            turn_dic_to_be_JSON_serializable(dic)
+
+        data['code'] = 200
+        data['msg'] = '操作成功'
+        data['data'] = {'total':count,
+                        'page_num':current_page,
+                        'perPageItemNum':perPageItemNum,
+                        'data':data_list}
 
 
-class MyEncoder(json.JSONEncoder):
+        return HttpResponse(json.dumps(data, ensure_ascii=False))
+    else:
+        return render_to_response('job_list.html')
 
-    def default(self, obj):
-        """
-        只要检查到了是bytes类型的数据就把它转为str类型
-        :param obj:
-        :return:
-        """
-        if isinstance(obj, bytes):
-            return str(obj, encoding='utf-8')
-        return json.JSONEncoder.default(self, obj)
+
 
