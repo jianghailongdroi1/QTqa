@@ -771,7 +771,7 @@ def query_job_results(request):
         # 查询具体数据
         result_list = result_objs.values('id','project__project_name','cronjob__job_name',
                                    'executed_result','link_for_result','time_start_excute',
-                                   'time_end_excute')
+                                   'time_end_excute','cronjob__type')
         # print('=============job_list:',result_list)
         results = []
         for result in result_list:
