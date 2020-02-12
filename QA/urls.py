@@ -86,7 +86,7 @@ urlpatterns = [
 
     # 新建suite的接口
     url(r'^create_suite/$', views.add_suite),
-    # 编辑suite的接口
+    # 删除suite的接口
     url(r'^delete_suite/$', views.delete_suite),
     # 编辑suite的接口
     url(r'^edit_suite/$', views.edit_suite),
