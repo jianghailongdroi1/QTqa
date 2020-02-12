@@ -40,150 +40,150 @@ def add_project(request):
 def list(request):
     request.method == "get"
     return render_to_response('project_list.html')
+#
+# # Create your views here.
+# def get_job_result_add_page(request):
+#     return render(request,"job_result_add_page.html")
 
-# Create your views here.
-def get_job_result_add_page(request):
-    return render(request,"job_result_add_page.html")
+# #调试用
+# def job_result_add(request):
+#     if request.method == "GET":
+#         project_obj = models.Project.objects.filter(id=2)[0]
+#         models.Job_result.objects.create(result_name='执行结果3',project = project_obj,execute_by=1,executed_result='执行结果总数',
+#                                          link_for_result='weriuweriu',time_start_excute='2019-12-01')
+#     elif request.method == "POST":
+#         body = request.body
+#
+#     results = models.Job_result.objects.all()
+#     data = {'result_list':results}
+#     return render(request, "job_result_page1.0.html", data)
+#
+# def job_result_select(request,pagenum =1):
+#     job_result_list = models.Job_result.objects.all()#查看所有的数据
+#     paginator = Paginator(job_result_list, 10)  # 这里的book_list必须是一个集合对象，把所有的书分页，一页有10个
+#     print("count:",paginator.count)           #数据总数
+#     print("num_pages",paginator.num_pages)    #总页数
+#     page_range= paginator.page_range  #页码的列表
+#     # page1=paginator.page(1) #第1页的page对象
+#     # for i in page1:         #遍历第1页的所有数据对象
+#     #     print(i)
+#     print(paginator.page(1).object_list)  # 第1页的所有数据
+#     page = request.GET.get('page', pagenum)
+#     currentPage = int(page)
+#
+#     #  如果页数十分多时，换另外一种显示方式
+#     if paginator.num_pages>30:
+#
+#         if currentPage-5<1:
+#             page_range=range(1,11)
+#         elif currentPage+5>paginator.num_pages:
+#             page_range=range(currentPage-5,paginator.num_pages+1)
+#
+#         else:
+#             page_range=range(currentPage-5,currentPage+5)
+#     else:
+#         page_range=paginator.page_range
+#
+#     try:
+#         print(page)
+#         job_result_list = paginator.page(page)
+#     except PageNotAnInteger:
+#         job_result_list = paginator.page(1)
+#     except EmptyPage:
+#         job_result_list = paginator.page(paginator.num_pages)
+#
+#     data = {'result_list':job_result_list}
+#     data1 = {'result_list':job_result_list,"paginator":paginator,"currentPage":currentPage,"page_range":page_range}
+#     # return render(request,"job_result_page1.0.html",data1)
+#     return render(request,"job_result_page2.0.html",data1)
+#
+# #仅支持一个job跑一个suite
+# def excute_job_immediately(request,project):
+#     #获取执行suite时的环境,在setting中配置
+#     httprunner_project_path = settings.HTTPRUNNER_PROJECT_PATH[project]
+#     print("httprunner_project_path:",httprunner_project_path)
+#     suite_path = httprunner_project_path + '\\testsuites\\'
+#
+#     #获取project相关的suite
+#     project_obj = models.Project.objects.filter(project_code=project,effective_flag=1)[0]
+#     suite_dic = project_obj.suite_set.filter(effective_flag=1,status=1).values("suite_name")
+#     suite_list =[]
+#     for i in suite_dic:
+#         suite_list.append(suite_path + i["suite_name"])
+#
+#     #执行suite并返回结果
+#     result = myFunctions.run_httprunnner_script(suite_list[0])
+#
+#     report_path = result['reportpath']
+#     start_time = result['time']['start_datetime']
+#     summary = result['stat']['testcases']
+#     result_name = project +'项目' + start_time +"部署完成触发执行的job"
+#
+#     #将结果放入表中
+#     project_obj = models.Project.objects.filter(project_code=project)[0]
+#     models.Job_result.objects.create(result_name=result_name,project=project_obj,
+#                                      execute_by=3,executed_result=summary,
+#                                      link_for_result=report_path,time_start_excute=start_time)
+#
+#     return HttpResponse("添加成功")
+#
 
-#调试用
-def job_result_add(request):
-    if request.method == "GET":
-        project_obj = models.Project.objects.filter(id=2)[0]
-        models.Job_result.objects.create(result_name='执行结果3',project = project_obj,execute_by=1,executed_result='执行结果总数',
-                                         link_for_result='weriuweriu',time_start_excute='2019-12-01')
-    elif request.method == "POST":
-        body = request.body
-
-    results = models.Job_result.objects.all()
-    data = {'result_list':results}
-    return render(request, "job_result_page1.0.html", data)
-
-def job_result_select(request,pagenum =1):
-    job_result_list = models.Job_result.objects.all()#查看所有的数据
-    paginator = Paginator(job_result_list, 10)  # 这里的book_list必须是一个集合对象，把所有的书分页，一页有10个
-    print("count:",paginator.count)           #数据总数
-    print("num_pages",paginator.num_pages)    #总页数
-    page_range= paginator.page_range  #页码的列表
-    # page1=paginator.page(1) #第1页的page对象
-    # for i in page1:         #遍历第1页的所有数据对象
-    #     print(i)
-    print(paginator.page(1).object_list)  # 第1页的所有数据
-    page = request.GET.get('page', pagenum)
-    currentPage = int(page)
-
-    #  如果页数十分多时，换另外一种显示方式
-    if paginator.num_pages>30:
-
-        if currentPage-5<1:
-            page_range=range(1,11)
-        elif currentPage+5>paginator.num_pages:
-            page_range=range(currentPage-5,paginator.num_pages+1)
-
-        else:
-            page_range=range(currentPage-5,currentPage+5)
-    else:
-        page_range=paginator.page_range
-
-    try:
-        print(page)
-        job_result_list = paginator.page(page)
-    except PageNotAnInteger:
-        job_result_list = paginator.page(1)
-    except EmptyPage:
-        job_result_list = paginator.page(paginator.num_pages)
-
-    data = {'result_list':job_result_list}
-    data1 = {'result_list':job_result_list,"paginator":paginator,"currentPage":currentPage,"page_range":page_range}
-    # return render(request,"job_result_page1.0.html",data1)
-    return render(request,"job_result_page2.0.html",data1)
-
-#仅支持一个job跑一个suite
-def excute_job_immediately(request,project):
-    #获取执行suite时的环境,在setting中配置
-    httprunner_project_path = settings.HTTPRUNNER_PROJECT_PATH[project]
-    print("httprunner_project_path:",httprunner_project_path)
-    suite_path = httprunner_project_path + '\\testsuites\\'
-
-    #获取project相关的suite
-    project_obj = models.Project.objects.filter(project_code=project,effective_flag=1)[0]
-    suite_dic = project_obj.suite_set.filter(effective_flag=1,status=1).values("suite_name")
-    suite_list =[]
-    for i in suite_dic:
-        suite_list.append(suite_path + i["suite_name"])
-
-    #执行suite并返回结果
-    result = myFunctions.run_httprunnner_script(suite_list[0])
-
-    report_path = result['reportpath']
-    start_time = result['time']['start_datetime']
-    summary = result['stat']['testcases']
-    result_name = project +'项目' + start_time +"部署完成触发执行的job"
-
-    #将结果放入表中
-    project_obj = models.Project.objects.filter(project_code=project)[0]
-    models.Job_result.objects.create(result_name=result_name,project=project_obj,
-                                     execute_by=3,executed_result=summary,
-                                     link_for_result=report_path,time_start_excute=start_time)
-
-    return HttpResponse("添加成功")
-
-
-#新建一个定时任务(调试版)
-def create_cron_job(request):
-    message = None
-    project_obj = models.Project.objects.filter(project_code='baidu')[0]
-    job_name = '测试job名称'+ datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    #开始执行时间
-    time_start_excute = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    iterval_time = 10
-
-    #限制最多执行多少次，是为了限制生成的子任务的个数。
-    maximum_times = 1
-
-    if maximum_times<=0:
-        message = "最大执行次数必须是大于等于1的整数"
-        return HttpResponse(message)
-    #开始时间必须大于当前时间
-
-    models.CronJob.objects.create(project=project_obj,job_name=job_name,
-                                  time_start_excute=time_start_excute,iterval_time=iterval_time,
-                                  maximum_times=maximum_times)
-
-    return HttpResponse("OK")
-
-
-#启动一个定时任务,新建子任务
-def start_cronjob_view(request,job_id):
-    try:
-        #获取到任务表数据
-        job_obj = models.CronJob.objects.filter(id=job_id,effective_flag=1,enable=0)[0]
-    except Exception as e:
-        return HttpResponse("请检查数据是否符合要求")
-
-    #获取任务详细信息
-    time_start_excute = job_obj.time_start_excute
-    iterval_time = job_obj.iterval_time
-    maximum_times = job_obj.maximum_times
-
-    # print("time_start_excute:",time_start_excute)
-    # print("iterval_time:",iterval_time)
-    # print("maximum_times:",maximum_times)
-
-    #计算每个子任务执行时间
-    for i in range(1,maximum_times + 1 ):
-        excute_time = time_start_excute + datetime.timedelta(minutes= iterval_time * i)
-        # 在子任务表中插入数据
-        models.Subtask.objects.create(cronjob=job_obj, time_excepte_excuted=excute_time.strftime("%Y-%m-%d %H:%M:%S"))
-
-    #更新定时任务表的状态
-    models.CronJob.objects.filter(id=job_id, effective_flag=1, enable=0).update(enable = 1,status = 2)
-
-    #给出返回值
-    return HttpResponse("定时任务已启动!")
+# #新建一个定时任务(调试版)
+# def create_cron_job(request):
+#     message = None
+#     project_obj = models.Project.objects.filter(project_code='baidu')[0]
+#     job_name = '测试job名称'+ datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+#     #开始执行时间
+#     time_start_excute = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+#     iterval_time = 10
+#
+#     #限制最多执行多少次，是为了限制生成的子任务的个数。
+#     maximum_times = 1
+#
+#     if maximum_times<=0:
+#         message = "最大执行次数必须是大于等于1的整数"
+#         return HttpResponse(message)
+#     #开始时间必须大于当前时间
+#
+#     models.CronJob.objects.create(project=project_obj,job_name=job_name,
+#                                   time_start_excute=time_start_excute,iterval_time=iterval_time,
+#                                   maximum_times=maximum_times)
+#
+#     return HttpResponse("OK")
 
 
-def test_run_cronjob(request,id):
-    return myFunctions.test_run_cronjob(id)
+# #启动一个定时任务,新建子任务
+# def start_cronjob_view(request,job_id):
+#     try:
+#         #获取到任务表数据
+#         job_obj = models.CronJob.objects.filter(id=job_id,effective_flag=1,enable=0)[0]
+#     except Exception as e:
+#         return HttpResponse("请检查数据是否符合要求")
+#
+#     #获取任务详细信息
+#     time_start_excute = job_obj.time_start_excute
+#     iterval_time = job_obj.iterval_time
+#     maximum_times = job_obj.maximum_times
+#
+#     # print("time_start_excute:",time_start_excute)
+#     # print("iterval_time:",iterval_time)
+#     # print("maximum_times:",maximum_times)
+#
+#     #计算每个子任务执行时间
+#     for i in range(1,maximum_times + 1 ):
+#         excute_time = time_start_excute + datetime.timedelta(minutes= iterval_time * i)
+#         # 在子任务表中插入数据
+#         models.Subtask.objects.create(cronjob=job_obj, time_excepte_excuted=excute_time.strftime("%Y-%m-%d %H:%M:%S"))
+#
+#     #更新定时任务表的状态
+#     models.CronJob.objects.filter(id=job_id, effective_flag=1, enable=0).update(enable = 1,status = 2)
+#
+#     #给出返回值
+#     return HttpResponse("定时任务已启动!")
+
+#
+# def test_run_cronjob(request,id):
+#     return myFunctions.test_run_cronjob(id)
 
 
 def test_function(request):
@@ -501,13 +501,22 @@ def enable_job(request):
             data['code'] = '1002'
             data['msg'] = '当前任务已被删除，不能启用'
             return HttpResponse(json.dumps(data, ensure_ascii=False))
+
         if job_obj.enable == '1':
             data['code'] = '1003'
             data['msg'] = '当前任务已被启用，不能重复启用'
             return HttpResponse(json.dumps(data, ensure_ascii=False))
 
-        job_type = job_obj.type
+        #判断任务下是否有对应的suite，没有就报错
+        suite_count = models.CronJob.objects.get(id=job_id).suite_set.all().count()
+        if suite_count ==0:
+            data['code'] = '1004'
+            data['msg'] = '请先关联suite'
+            return HttpResponse(json.dumps(data, ensure_ascii=False))
 
+
+        job_type = job_obj.type
+        #第三方调用任务
         if job_type == 'called_task':
             if job_obj.enable == '0':
                 models.CronJob.objects.filter(id=job_id,effective_flag=1).update(enable=1, status=2
@@ -525,6 +534,7 @@ def enable_job(request):
                 #给出返回值
                 return HttpResponse(json.dumps(data, ensure_ascii=False))
 
+        #定时任务
         if job_type == 'timing_task':
             if job_obj.enable == '0':
                 #获取任务详细信息
@@ -555,6 +565,8 @@ def enable_job(request):
 
                 #给出返回值
                 return HttpResponse(json.dumps(data, ensure_ascii=False))
+
+        #立即执行任务
         if job_type == 'instant_task':
             if job_obj.enable == '0':
                 #获取任务详细信息
@@ -695,25 +707,71 @@ def edit_suite(request):
     else:
         return render_to_response('suite_list.html')
 
-#查询项目
+
+#查询project
 def SearchForProject(request):
-    if request.method == "GET":
-        projects = []
-        query_pro = Project.objects.all()
-        for pro in query_pro:
-            projects.append({
-                "project_code": pro.project_code,
-                "project_name": pro.project_name,
-                "description": pro.description,
-                "time_created": str(pro.time_created),
-            })
-        return JsonResponse(
-            {
-                "all_projects":projects,
-                "msg": "success",
-                "status":200
-            }
-        )
+    if request.method == 'POST':
+        data = {}
+        #获取数据
+        #关于查询的入参
+        project_id = request.POST.get('project_id',None)
+
+        #关于分页
+        #当前页码
+        current_page = request.POST.get('current_page','1')
+        #每页的数据量
+        perPageItemNum = request.POST.get('perPageItemNum','10')
+        print("project_id:",project_id)
+        print("current_page:",current_page)
+        print("perPageItemNum:",perPageItemNum)
+
+        #查询数据
+        pro_objs=None
+        if  project_id != None:
+            project_objs = models.Project.objects.filter(project_id=project_id, effective_flag=1)
+            if project_objs.count() == 0:
+                data['code'] = '1001'
+                data['msg'] = '项目不存在'
+                return HttpResponse(json.dumps(data, ensure_ascii=False))
+
+            # pro_objs = models.CronJob.objects.filter(project_id=project_id, effective_flag=1)
+
+        else:
+            pro_objs = models.Project.objects.filter( effective_flag=1)
+
+        # 查询总数据量
+        count = pro_objs.count()
+        print('=============count:',count)
+        # 查询具体数据
+        pro_list = pro_objs.values('id','project_code','project_name',
+                                   'description','time_created','time_updated')
+        pros = []
+        for pro in pro_list:
+            pros.append(pro)
+
+        #分页
+        from autotest.myUtil.pager import Pagination
+
+        page_obj = Pagination(count, current_page,perPageItemNum)
+
+        data_list = pros[int(page_obj.start()) : int(page_obj.end()) ]
+
+        from autotest.myUtil.commonFunction import turn_dic_to_be_JSON_serializable
+        # print("data_list:",data_list)
+        for dic in data_list:
+            turn_dic_to_be_JSON_serializable(dic)
+
+        data['code'] = 200
+        data['msg'] = '操作成功'
+        data['data'] = {'total':count,
+                        'page_num':current_page,
+                        'perPageItemNum':perPageItemNum,
+                        'data':data_list}
+
+
+        return HttpResponse(json.dumps(data, ensure_ascii=False))
+    else:
+        return render_to_response('job_list.html')
 
 #查询suite
 def SearchForSuite(request):
@@ -742,6 +800,7 @@ def query_job_results(request):
         #获取数据
         #关于查询的入参
         project_id = request.POST.get('project_id',None)
+        job_id = request.POST.get('job_id',None)
 
         #关于分页
         #当前页码
@@ -749,40 +808,62 @@ def query_job_results(request):
         #每页的数据量
         perPageItemNum = request.POST.get('perPageItemNum','10')
 
-        #查询数据
-        job_objs=None
+        #先设置一个变量，用于放置结果对象的QuerySet[]
+        result_objs = None
+
+        #project_id不为空
         if  project_id != None:
-            project_objs = Project.objects.filter(id=project_id)
-            if project_objs.count() == 0:
+            #判断project_id是否有效
+            if models.Project.objects.filter(id = project_id,effective_flag= 1).count() == 0:
                 data['code'] = '1001'
-                data['msg'] = '项目不存在'
+                data['msg'] = '项目不存在或无效'
                 return HttpResponse(json.dumps(data, ensure_ascii=False))
 
-            job_objs = models.CronJob.objects.filter(project_id=project_id, effective_flag=1)
+            #job_id也不为空
+            if job_id != None:
+                #判断job_id是否存在
+                if models.CronJob.objects.filter(id = job_id,effective_flag= 1).count() == 0:
+                    data['code'] = '1001'
+                    data['msg'] = '任务不存在或无效'
+                    return HttpResponse(json.dumps(data, ensure_ascii=False))
 
+                result_objs = models.Job_result.objects.filter(project_id =project_id ,cronjob_id= job_id)
+            else:
+                #job_id为空
+                result_objs = models.Job_result.objects.filter(project_id=project_id)
         else:
-            job_objs = models.CronJob.objects.filter( effective_flag=1)
+            #project_id为空
+            #job_id不为空
+            if job_id != None:
+                #判断job_id是否存在
+                if models.CronJob.objects.filter(id = job_id,effective_flag= 1).count() == 0:
+                    data['code'] = '1001'
+                    data['msg'] = '任务不存在或无效'
+                    return HttpResponse(json.dumps(data, ensure_ascii=False))
+
+                result_objs = models.Job_result.objects.filter(cronjob_id= job_id)
+            else:
+                #job_id为空
+                result_objs = models.Job_result.objects.all()
 
         # 查询总数据量
-        count = job_objs.count()
+        count = result_objs.count()
         # print('=============count:',count)
         # 查询具体数据
-        job_list = job_objs.values('id','project_id','project__project_name',
-                                   'job_name','time_start_excute','iterval_time',
-                                   'maximum_times','type','status','description',
-                                   'enable','time_created','time_updated')
-        # print('=============job_list:',job_list)
-        jobs = []
-        for job in job_list:
-            jobs.append(job)
-        # print("==============jobs:",jobs)
+        result_list = result_objs.values('id','project__project_name','cronjob__job_name',
+                                   'executed_result','link_for_result','time_start_excute',
+                                   'time_end_excute')
+        # print('=============job_list:',result_list)
+        results = []
+        for result in result_list:
+            results.append(result)
 
         #分页
         from autotest.myUtil.pager import Pagination
 
         page_obj = Pagination(count, current_page,perPageItemNum)
 
-        data_list = jobs[int(page_obj.start()) : int(page_obj.end()) ]
+        data_list = results[int(page_obj.start()) : int(page_obj.end()) ]
 
         from autotest.myUtil.commonFunction import turn_dic_to_be_JSON_serializable
         # print("data_list:",data_list)
