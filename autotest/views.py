@@ -271,9 +271,12 @@ def create_job(request):
 
                 return HttpResponse(json.dumps(data, ensure_ascii=False))
         else:
-            return render_to_response('add_task.html')
-
-    return HttpResponse(json.dumps(data))
+            data['code'] = '1005'
+            data['msg'] = 'job_type错误'
+            return HttpResponse(json.dumps(data, ensure_ascii=False))
+    else:
+        #请求方式是 get
+        return render_to_response('add_task.html')
 
 #编辑job
 def edit_job(request):
@@ -710,92 +713,6 @@ def edit_suite(request):
     else:
         return render_to_response('suite_list.html')
 
-
-#查询project
-def SearchForProject(request):
-    if request.method == 'POST':
-        data = {}
-        #获取数据
-        #关于查询的入参
-        project_id = request.POST.get('project_id',None)
-
-        #关于分页
-        #当前页码
-        current_page = request.POST.get('current_page','1')
-        #每页的数据量
-        perPageItemNum = request.POST.get('perPageItemNum','10')
-        print("project_id:",project_id)
-        print("current_page:",current_page)
-        print("perPageItemNum:",perPageItemNum)
-
-        #查询数据
-        pro_objs=None
-        if  project_id != None:
-            project_objs = models.Project.objects.filter(project_id=project_id, effective_flag=1)
-            if project_objs.count() == 0:
-                data['code'] = '1001'
-                data['msg'] = '项目不存在'
-                return HttpResponse(json.dumps(data, ensure_ascii=False))
-
-            # pro_objs = models.CronJob.objects.filter(project_id=project_id, effective_flag=1)
-
-        else:
-            pro_objs = models.Project.objects.filter( effective_flag=1)
-
-        # 查询总数据量
-        count = pro_objs.count()
-        print('=============count:',count)
-        # 查询具体数据
-        pro_list = pro_objs.values('id','project_code','project_name',
-                                   'description','time_created','time_updated')
-        pros = []
-        for pro in pro_list:
-            pros.append(pro)
-
-        #分页
-        from autotest.myUtil.pager import Pagination
-
-        page_obj = Pagination(count, current_page,perPageItemNum)
-
-        data_list = pros[int(page_obj.start()) : int(page_obj.end()) ]
-
-        from autotest.myUtil.commonFunction import turn_dic_to_be_JSON_serializable
-        # print("data_list:",data_list)
-        for dic in data_list:
-            turn_dic_to_be_JSON_serializable(dic)
-
-        data['code'] = 200
-        data['msg'] = '操作成功'
-        data['data'] = {'total':count,
-                        'page_num':current_page,
-                        'perPageItemNum':perPageItemNum,
-                        'data':data_list}
-
-
-        return HttpResponse(json.dumps(data, ensure_ascii=False))
-    else:
-        return render_to_response('job_list.html')
-
-#查询suite
-def SearchForSuite(request):
-    if request.method == "GET":
-        suites = []
-        query_sui = models.suite.objects.all()
-        for sui in query_sui:
-            suites.append({
-                "suite_name": sui.suite_name,
-                "project_id": sui.project_id,
-                "description": sui.description,
-                "time_created": str(sui.time_created),
-            })
-        return JsonResponse(
-            {
-                "all_suites":suites,
-                "msg": "success",
-                "status":200
-            }
-        )
-
 #查询 执行结果
 def query_job_results(request):
     if request.method == 'POST':
@@ -884,6 +801,140 @@ def query_job_results(request):
         return HttpResponse(json.dumps(data, ensure_ascii=False))
     else:
         return render_to_response('job_list.html')
+
+#查询project
+def SearchForProject(request):
+    # return HttpResponse("asdjhflkajsdklf")
+    if request.method == 'POST':
+        data = {}
+        #获取数据
+        #关于查询的入参
+        project_id = request.POST.get('project_id',None)
+
+        #关于分页
+        #当前页码
+        current_page = request.POST.get('current_page','1')
+        #每页的数据量
+        perPageItemNum = request.POST.get('perPageItemNum','10')
+        print("project_id:",project_id)
+        print("current_page:",current_page)
+        print("perPageItemNum:",perPageItemNum)
+        # return  HttpResponse("kasjdhfkjasdhkjf")
+
+        #查询数据
+        pro_objs=None
+        if  project_id != None:
+            project_objs = models.Project.objects.filter(project_id=project_id, effective_flag=1)
+            if project_objs.count() == 0:
+                data['code'] = '1001'
+                data['msg'] = '项目不存在'
+                return HttpResponse(json.dumps(data, ensure_ascii=False))
+
+            # pro_objs = models.CronJob.objects.filter(project_id=project_id, effective_flag=1)
+
+        else:
+            pro_objs = models.Project.objects.filter( effective_flag=1)
+
+        # 查询总数据量
+        count = pro_objs.count()
+        print('=============count:',count)
+        # 查询具体数据
+        pro_list = pro_objs.values('id','project_code','project_name',
+                                   'description','time_created','time_updated')
+        pros = []
+        for pro in pro_list:
+            pros.append(pro)
+
+        #分页
+        from autotest.myUtil.pager import Pagination
+
+        page_obj = Pagination(count, current_page,perPageItemNum)
+
+        data_list = pros[int(page_obj.start()) : int(page_obj.end()) ]
+
+        from autotest.myUtil.commonFunction import turn_dic_to_be_JSON_serializable
+        # print("data_list:",data_list)
+        for dic in data_list:
+            turn_dic_to_be_JSON_serializable(dic)
+
+        data['code'] = 200
+        data['msg'] = '操作成功'
+        data['data'] = {'total':count,
+                        'page_num':current_page,
+                        'perPageItemNum':perPageItemNum,
+                        'data':data_list}
+
+
+        return HttpResponse(json.dumps(data, ensure_ascii=False))
+    else:
+        return render_to_response('job_list.html')
+
+#查询suite
+def SearchForSuite(request):
+    if request.method == 'POST':
+        data = {}
+        #获取数据
+        #关于查询的入参
+        project_id = request.POST.get('project_id',None)
+
+        #关于分页
+        #当前页码
+        current_page = request.POST.get('current_page','1')
+        #每页的数据量
+        perPageItemNum = request.POST.get('perPageItemNum','10')
+        # print("project_id:",project_id)
+        # print("current_page:",current_page)
+        # print("perPageItemNum:",perPageItemNum)
+
+
+        #查询数据
+        suit_objs=None
+        if  project_id != None:
+            project_objs = models.suite.objects.filter(project_id=project_id, effective_flag=1)
+            if project_objs.count() == 0:
+                data['code'] = '1001'
+                data['msg'] = 'suite不存在'
+                return HttpResponse(json.dumps(data, ensure_ascii=False))
+
+            # pro_objs = models.CronJob.objects.filter(project_id=project_id, effective_flag=1)
+
+        else:
+            pro_objs = models.suite.objects.filter( effective_flag=1)
+
+        # 查询总数据量
+        count = pro_objs.count()
+        print('=============count:',count)
+        # 查询具体数据
+        suit_list = pro_objs.values('id','project_id','suite_name',
+                                   'description','time_created')
+        suits = []
+        for suit in suit_list:
+            suits.append(suit)
+
+        #分页
+        from autotest.myUtil.pager import Pagination
+
+        page_obj = Pagination(count, current_page,perPageItemNum)
+
+        data_list = suits[int(page_obj.start()) : int(page_obj.end()) ]
+
+        from autotest.myUtil.commonFunction import turn_dic_to_be_JSON_serializable
+        # print("data_list:",data_list)
+        for dic in data_list:
+            turn_dic_to_be_JSON_serializable(dic)
+
+        data['code'] = 200
+        data['msg'] = '操作成功'
+        data['data'] = {'total':count,
+                        'page_num':current_page,
+                        'perPageItemNum':perPageItemNum,
+                        'data':data_list}
+
+
+        return HttpResponse(json.dumps(data, ensure_ascii=False))
+    else:
+        return render_to_response('job_list.html')
+
 
 
 
