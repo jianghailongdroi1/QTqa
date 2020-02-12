@@ -247,6 +247,7 @@ def create_job(request):
                     data['code'] = '1001'
                     data['msg'] = '必填项为空'
                     return HttpResponse(json.dumps(data, ensure_ascii=False))
+
                 #新建job
                 obj = models.CronJob.objects.create(project = project_objs.first(),
                                               job_name = job_name,description=description,
@@ -267,6 +268,8 @@ def create_job(request):
                 # job和suite关联
                 if suite_list != None:
                     obj.suite_set.set(suite_list)
+
+                return HttpResponse(json.dumps(data, ensure_ascii=False))
         else:
             return render_to_response('add_task.html')
 
