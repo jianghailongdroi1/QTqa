@@ -210,12 +210,12 @@ def create_job(request):
 
         #传入的suite_list是str格式，需进行转化
         if suite_list is not None:
-            new_suite_list = [];
+            new_suite_list = []
 
             for n in  suite_list[1:-1].split(','):
-                new_suite_list.append(int(n));
+                new_suite_list.append(int(n))
 
-            suite_list = new_suite_list;
+            suite_list = new_suite_list
 
         #校验
         if not all ([project_id,job_name,job_type]):
@@ -296,12 +296,12 @@ def edit_job(request):
 
         #传入的suite_list是str格式，需进行转化
         if suite_list is not None:
-            new_suite_list = [];
+            new_suite_list = []
 
             for n in  suite_list[1:-1].split(','):
-                new_suite_list.append(int(n));
+                new_suite_list.append(int(n))
 
-            suite_list = new_suite_list;
+            suite_list = new_suite_list
 
         #校验
         if not all ([job_id,project_id,job_name,job_type]):
@@ -629,7 +629,6 @@ def unenable_job(request):
         data['msg'] = '任务已暂停！'
 
         return HttpResponse(json.dumps(data, ensure_ascii=False))
-
 
 
 #新建suite
