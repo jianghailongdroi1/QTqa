@@ -91,5 +91,8 @@ urlpatterns = [
     # 编辑suite的接口
     url(r'^edit_suite/$', views.edit_suite),
     #查询suite接口
-    url(r'^SearchForSuite/$', views.SearchForSuite)
+    url(r'^SearchForSuite/$', views.SearchForSuite),
+
+    # 查询执行结果接口
+    url(r'^query_job_results/$', views.query_job_results),
 ]
