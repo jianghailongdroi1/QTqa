@@ -37,9 +37,38 @@ def add_project(request):
     return render_to_response('add_project.html')
 
 
-def list(request):
-    request.method == "get"
-    return render_to_response('project_list.html')
+# def edit_project(request):
+#     if request.method == "POST":
+#         data = {}
+#         project_id = request.POST.get('project_id',None)
+#         project_code = request.POST.get('project_code',None)
+#         project_name = request.POST.get('project_name',None)
+#         description = request.POST.get('description',None)
+#         if not all ([project_id,project_code,project_name]):
+#             data['code'] = '1001'
+#             data['msg'] = '必填项为空'
+#             return HttpResponse(json.dumps(data, ensure_ascii=False))
+#         suite_count = models.suite.objects.filter(id = suite_id).count()
+#         if suite_count ==0:
+#             data['code'] = '1002'
+#             data['msg'] = 'suite不存在'
+#             return HttpResponse(json.dumps(data, ensure_ascii=False))
+#
+#         project_obj = Project.objects.filter(id=project_id)
+#         if project_obj.count() == 0:
+#             data['code'] = '1003'
+#             data['msg'] = '项目不存在'
+#             return HttpResponse(json.dumps(data, ensure_ascii=False))
+#         else:
+#             models.suite.objects.filter(id =suite_id).update(project_id=project_id, suite_name=suite_name,
+#                                      description=description,time_updated = datetime.datetime.now()
+#                                                              )
+#
+#             data['code'] = '200'
+#             data['msg'] = '修改成功'
+#             return HttpResponse(json.dumps(data, ensure_ascii=False))
+#     else:
+#         return render_to_response('add_project.html')
 #
 # # Create your views here.
 # def get_job_result_add_page(request):
@@ -815,28 +844,28 @@ def SearchForProject(request):
         current_page = request.POST.get('current_page','1')
         #每页的数据量
         perPageItemNum = request.POST.get('perPageItemNum','10')
-        print("project_id:",project_id)
-        print("current_page:",current_page)
-        print("perPageItemNum:",perPageItemNum)
+        # print("project_id:",project_id)
+        # print("current_page:",current_page)
+        # print("perPageItemNum:",perPageItemNum)
         # return  HttpResponse("kasjdhfkjasdhkjf")
 
         #查询数据
         pro_objs=None
         if  project_id != None:
-            project_objs = models.Project.objects.filter(project_id=project_id, effective_flag=1)
+            project_objs = models.Project.objects.filter(id=project_id, effective_flag=1)
             if project_objs.count() == 0:
                 data['code'] = '1001'
                 data['msg'] = '项目不存在'
                 return HttpResponse(json.dumps(data, ensure_ascii=False))
 
-            # pro_objs = models.CronJob.objects.filter(project_id=project_id, effective_flag=1)
+            pro_objs = models.Project.objects.filter(id=project_id, effective_flag=1)
 
         else:
-            pro_objs = models.Project.objects.filter( effective_flag=1)
+            pro_objs = models.Project.objects.filter(effective_flag=1)
 
         # 查询总数据量
         count = pro_objs.count()
-        print('=============count:',count)
+        # print('=============count:',count)
         # 查询具体数据
         pro_list = pro_objs.values('id','project_code','project_name',
                                    'description','time_created','time_updated')
