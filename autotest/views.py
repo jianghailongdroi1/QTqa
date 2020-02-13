@@ -52,10 +52,10 @@ def edit_project(request):
             return HttpResponse(json.dumps(data, ensure_ascii=False))
 
         #校验project_id是否正确
-        project_count = models.Project.objects.filter(id = project_id,effective_flag= 1).count()
+        project_count = models.Project.objects.filter(id = project_id).count()
         if project_count ==0:
             data['code'] = '1002'
-            data['msg'] = 'project不存在或已删除'
+            data['msg'] = 'project不存在'
             return HttpResponse(json.dumps(data, ensure_ascii=False))
 
         else:
@@ -66,7 +66,7 @@ def edit_project(request):
                 return HttpResponse(json.dumps(data, ensure_ascii=False))
 
 
-            models.Project.objects.filter(id = project_id,effective_flag= 1).update(id=project_id, project_code=project_code,
+            models.Project.objects.filter(id = project_id).update( project_code=project_code,
                                           project_name =project_name,description=description,time_updated = datetime.datetime.now()
                                                              )
 
@@ -75,6 +75,35 @@ def edit_project(request):
             return HttpResponse(json.dumps(data, ensure_ascii=False))
     else:
         return render_to_response('add_project.html')
+
+# 删除项目
+def delete_project(request):
+    if request.method == "POST":
+        data = {}
+        project_id = request.POST.get('project_id', None)
+
+        # 校验必填字段是否为空
+        if not all([project_id]):
+            data['code'] = '1001'
+            data['msg'] = '必填项为空'
+            return HttpResponse(json.dumps(data, ensure_ascii=False))
+
+        # 校验project_id是否正确
+        project_count = models.Project.objects.filter(id=project_id).count()
+        if project_count == 0:
+            data['code'] = '1002'
+            data['msg'] = 'project不存在'
+            return HttpResponse(json.dumps(data, ensure_ascii=False))
+
+        else:
+            models.Project.objects.filter(id=project_id, effective_flag=1).delete()
+            data['code'] = '200'
+            data['msg'] = '删除成功'
+            return HttpResponse(json.dumps(data, ensure_ascii=False))
+    else:
+        return render_to_response('project_list.html')
+
+
 #
 # # Create your views here.
 # def get_job_result_add_page(request):
