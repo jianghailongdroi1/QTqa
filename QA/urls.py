@@ -63,8 +63,8 @@ urlpatterns = [
 
     #新建项目
     path('add_project/', views.add_project),
-    #项目列表展示
-    path('project_list/', views.list),
+    #项目编辑接口
+    path('edit_project/', views.edit_project),
     #项目查询接口
     url(r'^SearchForProject/$', views.SearchForProject),
 
