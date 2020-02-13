@@ -69,15 +69,11 @@ urlpatterns = [
     url(r'^SearchForProject/$', views.SearchForProject),
 
     # 新建任务的接口
-    url(r'^create_job/$', views.create_job),
+    url(r'^add_task/$', views.create_job),
     # 编辑任务的接口
     url(r'^edit_job/$', views.edit_job),
     # 删除任务的接口
     url(r'^delete_job/$', views.delete_job),
-    #查询job
-    url(r'^query_jobs/$', views.query_jobs),
-    # 查询job_detail
-    url(r'^query_job_detail/$', views.query_job_detail),
 
     # 启动任务，创建对应的子任务
     url(r'^enable_job/$', views.enable_job),
@@ -85,14 +81,13 @@ urlpatterns = [
     url(r'^unenable_job/$', views.unenable_job),
 
     # 新建suite的接口
-    url(r'^create_suite/$', views.add_suite),
+    url(r'^add_suite/$', views.add_suite),
     # 删除suite的接口
     url(r'^delete_suite/$', views.delete_suite),
     # 编辑suite的接口
     url(r'^edit_suite/$', views.edit_suite),
     #查询suite接口
     url(r'^SearchForSuite/$', views.SearchForSuite),
-
     # 查询执行结果接口
     url(r'^query_job_results/$', views.query_job_results),
 ]
