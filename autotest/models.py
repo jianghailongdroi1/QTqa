@@ -57,7 +57,7 @@ class CronJob(models.Model):
     TYPE_CHOICES = (
         ('timing_task', '定时任务'),
         ('instant_task', '立即执行任务'),
-        ('called_task', '第三方调用任务')
+        ('called_task', '冒烟测试任务')
     )
     type = models.CharField(max_length=255,choices=TYPE_CHOICES,verbose_name="任务类型",null=False,default='timing_task')
 
