@@ -155,7 +155,7 @@ class suite(models.Model):
     '''
     suite表
     '''
-    suite_name = models.CharField(max_length=255,verbose_name="suite名称",null=False,unique=True)
+    suite_name = models.CharField(max_length=255,verbose_name="suite名称",null=False)
     project = models.ForeignKey("Project", on_delete=models.CASCADE,verbose_name='关联项目',null=False)
     cronjob=models.ManyToManyField(to="CronJob",blank=True,db_constraint = False)
 
