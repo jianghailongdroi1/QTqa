@@ -13,6 +13,7 @@ from autotest.models import Project
 import json
 from django.shortcuts import render_to_response
 
+#新增项目
 def add_project(request):
     if request.method == "POST":
         data = {}
@@ -36,39 +37,44 @@ def add_project(request):
             return HttpResponse(json.dumps(data, ensure_ascii=False))
     return render_to_response('add_project.html')
 
+#编辑项目
+def edit_project(request):
+    if request.method == "POST":
+        data = {}
+        project_id = request.POST.get('project_id',None)
+        project_code = request.POST.get('project_code',None)
+        project_name = request.POST.get('project_name',None)
+        description = request.POST.get('description',None)
+        #校验必填字段是否为空
+        if not all ([project_id,project_code,project_name]):
+            data['code'] = '1001'
+            data['msg'] = '必填项为空'
+            return HttpResponse(json.dumps(data, ensure_ascii=False))
 
-# def edit_project(request):
-#     if request.method == "POST":
-#         data = {}
-#         project_id = request.POST.get('project_id',None)
-#         project_code = request.POST.get('project_code',None)
-#         project_name = request.POST.get('project_name',None)
-#         description = request.POST.get('description',None)
-#         if not all ([project_id,project_code,project_name]):
-#             data['code'] = '1001'
-#             data['msg'] = '必填项为空'
-#             return HttpResponse(json.dumps(data, ensure_ascii=False))
-#         suite_count = models.suite.objects.filter(id = suite_id).count()
-#         if suite_count ==0:
-#             data['code'] = '1002'
-#             data['msg'] = 'suite不存在'
-#             return HttpResponse(json.dumps(data, ensure_ascii=False))
-#
-#         project_obj = Project.objects.filter(id=project_id)
-#         if project_obj.count() == 0:
-#             data['code'] = '1003'
-#             data['msg'] = '项目不存在'
-#             return HttpResponse(json.dumps(data, ensure_ascii=False))
-#         else:
-#             models.suite.objects.filter(id =suite_id).update(project_id=project_id, suite_name=suite_name,
-#                                      description=description,time_updated = datetime.datetime.now()
-#                                                              )
-#
-#             data['code'] = '200'
-#             data['msg'] = '修改成功'
-#             return HttpResponse(json.dumps(data, ensure_ascii=False))
-#     else:
-#         return render_to_response('add_project.html')
+        #校验project_id是否正确
+        project_count = models.Project.objects.filter(id = project_id,effective_flag= 1).count()
+        if project_count ==0:
+            data['code'] = '1002'
+            data['msg'] = 'project不存在或已删除'
+            return HttpResponse(json.dumps(data, ensure_ascii=False))
+
+        else:
+            #校验project_code不在已有的项目中存在
+            if models.Project.objects.filter(project_code =project_code).exclude(id = project_id).count() != 0:
+                data['code'] = '1002'
+                data['msg'] = 'project_code已存在'
+                return HttpResponse(json.dumps(data, ensure_ascii=False))
+
+
+            models.Project.objects.filter(id = project_id,effective_flag= 1).update(id=project_id, project_code=project_code,
+                                          project_name =project_name,description=description,time_updated = datetime.datetime.now()
+                                                             )
+
+            data['code'] = '200'
+            data['msg'] = '修改成功'
+            return HttpResponse(json.dumps(data, ensure_ascii=False))
+    else:
+        return render_to_response('add_project.html')
 #
 # # Create your views here.
 # def get_job_result_add_page(request):
@@ -850,7 +856,7 @@ def SearchForProject(request):
         # return  HttpResponse("kasjdhfkjasdhkjf")
 
         #查询数据
-        pro_objs=None
+        pro_objs = None
         if  project_id != None:
             project_objs = models.Project.objects.filter(id=project_id, effective_flag=1)
             if project_objs.count() == 0:
