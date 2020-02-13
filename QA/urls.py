@@ -65,6 +65,8 @@ urlpatterns = [
     path('add_project/', views.add_project),
     #项目编辑接口
     path('edit_project/', views.edit_project),
+    # 项目删除接口
+    path('delete_project/', views.delete_project),
     #项目查询接口
     url(r'^SearchForProject/$', views.SearchForProject),
 
