@@ -934,6 +934,7 @@ def SearchForProject(request):
         query_pro = Project.objects.all()
         for pro in query_pro:
             projects.append({
+
                 "id": pro.id,
                 "project_code": pro.project_code,
                 "project_name": pro.project_name,
