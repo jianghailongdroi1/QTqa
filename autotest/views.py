@@ -930,7 +930,22 @@ def SearchForProject(request):
 
         return HttpResponse(json.dumps(data, ensure_ascii=False))
     else:
-        return render_to_response('job_list.html')
+        projects = []
+        query_pro = Project.objects.all()
+        for pro in query_pro:
+            projects.append({
+                "project_code": pro.project_code,
+                "project_name": pro.project_name,
+                "description": pro.description,
+                "time_created": str(pro.time_created),
+            })
+        return JsonResponse(
+            {
+                "all_projects": projects,
+                "msg": "sucess",
+                "status": 200
+            }
+        )
 
 #查询suite
 def SearchForSuite(request):
