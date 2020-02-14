@@ -18,6 +18,10 @@ from django.urls import path
 from django.conf.urls import url
 
 from autotest import views
+from autotest import views_job
+from autotest import views_project
+from autotest import views_suite
+from autotest import views_job_result
 from autotest.myFunctions import reset_overdue_subtask
 from autotest import myFunctions
 from apscheduler.scheduler import Scheduler
@@ -62,34 +66,37 @@ urlpatterns = [
         name='excute_job_by_thirdParty'),
 
     #新建项目
-    path('add_project/', views.add_project),
+    path('add_project/', views_project.add_project),
     #项目编辑接口
-    path('edit_project/', views.edit_project),
+    path('edit_project/', views_project.edit_project),
     # 项目删除接口
-    path('delete_project/', views.delete_project),
+    path('delete_project/', views_project.delete_project),
     #项目查询接口
-    url(r'^SearchForProject/$', views.SearchForProject),
+    url(r'^SearchForProject/$', views_project.SearchForProject),
 
     # 新建任务的接口
-    url(r'^add_task/$', views.create_job),
+    url(r'^add_task/$', views_job.create_job),
     # 编辑任务的接口
-    url(r'^edit_job/$', views.edit_job),
+    url(r'^edit_job/$', views_job.edit_job),
     # 删除任务的接口
-    url(r'^delete_job/$', views.delete_job),
+    url(r'^delete_job/$', views_job.delete_job),
 
     # 启动任务，创建对应的子任务
-    url(r'^enable_job/$', views.enable_job),
+    url(r'^enable_job/$', views_job.enable_job),
     # 暂停任务
-    url(r'^unenable_job/$', views.unenable_job),
+    url(r'^unenable_job/$', views_job.unenable_job),
 
     # 新建suite的接口
-    url(r'^add_suite/$', views.add_suite),
+    url(r'^add_suite/$', views_suite.add_suite),
     # 删除suite的接口
-    url(r'^delete_suite/$', views.delete_suite),
+    url(r'^delete_suite/$', views_suite.delete_suite),
     # 编辑suite的接口
-    url(r'^edit_suite/$', views.edit_suite),
-    #查询suite接口
-    url(r'^SearchForSuite/$', views.SearchForSuite),
+    url(r'^edit_suite/$', views_suite.edit_suite),
+    #查询suite接口_post
+    url(r'^SearchForSuite/$', views_suite.SearchForSuite),
+    # 查询suite接口
+    url(r'^SearchForSuite_by_project_id/$', views_suite.SearchForSuite),
+
     # 查询执行结果接口
-    url(r'^query_job_results/$', views.query_job_results),
+    url(r'^query_job_results/$', views_job_result.query_job_results),
 ]
