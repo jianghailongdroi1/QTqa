@@ -1,4 +1,4 @@
-import datetime
+import datetime,math
 
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
@@ -115,12 +115,12 @@ def SearchForProject(request):
 
         #关于分页
         #当前页码
-        current_page = request.POST.get('current_page','1')
+        current_page = int(request.POST.get('current_page','1'))
         #每页的数据量
-        perPageItemNum = request.POST.get('perPageItemNum','10')
+        perPageItemNum = int(request.POST.get('perPageItemNum','10'))
         # print("project_id:",project_id)
-        # print("current_page:",current_page)
-        # print("perPageItemNum:",perPageItemNum)
+        print("current_page:",type(current_page))
+        print("perPageItemNum:",type(perPageItemNum))
         # return  HttpResponse("kasjdhfkjasdhkjf")
 
         #查询数据
@@ -159,9 +159,20 @@ def SearchForProject(request):
         for dic in data_list:
             turn_dic_to_be_JSON_serializable(dic)
 
+        #返回值中增加总页数字段
+        #count为0时，页数为1
+        if count == 0:
+            total_page_num =1
+        else:
+            # count不为0时
+            total_page_num = math.ceil(count/perPageItemNum)
+
+
+
         data['code'] = 200
         data['msg'] = '操作成功'
         data['data'] = {'total':count,
+                        'total_page_num':total_page_num,
                         'page_num':current_page,
                         'perPageItemNum':perPageItemNum,
                         'data':data_list}

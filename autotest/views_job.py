@@ -10,7 +10,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import logging
 logger = logging.getLogger('HttpRunnerManager')
 from autotest.models import Project
-import json
+import json,math
 from django.shortcuts import render_to_response
 
 
@@ -220,9 +220,9 @@ def query_jobs(request):
 
         #关于分页
         #当前页码
-        current_page = request.POST.get('current_page','1')
+        current_page = int(request.POST.get('current_page','1'))
         #每页的数据量
-        perPageItemNum = request.POST.get('perPageItemNum','10')
+        perPageItemNum = int(request.POST.get('perPageItemNum','10'))
 
         #查询数据
         job_objs=None
@@ -264,9 +264,19 @@ def query_jobs(request):
         for dic in data_list:
             turn_dic_to_be_JSON_serializable(dic)
 
+        #返回值中增加总页数字段
+        #count为0时，页数为1
+        if count == 0:
+            total_page_num =1
+        else:
+            # count不为0时
+            total_page_num = math.ceil(count/perPageItemNum)
+
+
         data['code'] = 200
         data['msg'] = '操作成功'
         data['data'] = {'total':count,
+                        'total_page_num': total_page_num,
                         'page_num':current_page,
                         'perPageItemNum':perPageItemNum,
                         'data':data_list}

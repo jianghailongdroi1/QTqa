@@ -10,7 +10,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import logging
 logger = logging.getLogger('HttpRunnerManager')
 from autotest.models import Project
-import json
+import json,math
 from django.shortcuts import render_to_response
 
 
@@ -107,12 +107,10 @@ def SearchForSuite(request):
 
         #关于分页
         #当前页码
-        current_page = request.POST.get('current_page','1')
+        current_page = int(request.POST.get('current_page','1'))
         #每页的数据量
-        perPageItemNum = request.POST.get('perPageItemNum','10')
-        # print("project_id:",project_id)
-        # print("current_page:",current_page)
-        # print("perPageItemNum:",perPageItemNum)
+        perPageItemNum = int(request.POST.get('perPageItemNum','10'))
+
 
 
         #查询数据
@@ -135,7 +133,7 @@ def SearchForSuite(request):
 
         # 查询总数据量
         count = suite_objs.count()
-        print('=============count:',count)
+        # print('=============count:',count)
         # 查询具体数据
         suit_list = list(suite_objs.values('id','project_id','project__project_name','suite_name',
                                    'description','time_created'))
@@ -152,9 +150,18 @@ def SearchForSuite(request):
         for dic in data_list:
             turn_dic_to_be_JSON_serializable(dic)
 
+        #返回值中增加总页数字段
+        #count为0时，页数为1
+        if count == 0:
+            total_page_num =1
+        else:
+            # count不为0时
+            total_page_num = math.ceil(count/perPageItemNum)
+
         data['code'] = 200
         data['msg'] = '操作成功'
         data['data'] = {'total':count,
+                        'total_page_num': total_page_num,
                         'page_num':current_page,
                         'perPageItemNum':perPageItemNum,
                         'data':data_list}
