@@ -41,7 +41,7 @@ def add_project(request):
 def edit_project(request):
     if request.method == "POST":
         data = {}
-        project_id = request.POST.get('project_id',None)
+        project_id = request.POST.get('id',None)
         project_code = request.POST.get('project_code',None)
         project_name = request.POST.get('project_name',None)
         description = request.POST.get('description',None)
@@ -169,13 +169,11 @@ def SearchForProject(request):
 
 
 
-        data['code'] = 200
-        data['msg'] = '操作成功'
-        data['data'] = {'total':count,
+        data = {'total':count,
                         'total_page_num':total_page_num,
                         'page_num':current_page,
                         'perPageItemNum':perPageItemNum,
-                        'data':data_list}
+                        'rows':data_list}
 
 
         return HttpResponse(json.dumps(data, ensure_ascii=False))

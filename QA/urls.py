@@ -22,6 +22,7 @@ from autotest import views_job
 from autotest import views_project
 from autotest import views_suite
 from autotest import views_job_result
+from autotest import views_jiajia
 from autotest.myFunctions import reset_overdue_subtask
 from autotest import myFunctions
 from apscheduler.scheduler import Scheduler
@@ -71,9 +72,19 @@ urlpatterns = [
     path('edit_project/', views_project.edit_project),
     # 项目删除接口
     path('delete_project/', views_project.delete_project),
-    #项目查询接口
+    #项目查询接口(jiajia)
     url(r'^SearchForProject/$', views_project.SearchForProject),
+    url(r'^add_suite/SearchForProject/$', views_project.SearchForProject),
+    url(r'^project_list/SearchForProject/$', views_project.SearchForProject),
+    url(r'^add_task/SearchForProject/$', views_project.SearchForProject),
+    url(r'^add_task/SearchForSuites/$', views_suite.SearchForSuite),
+    path('project_list/', views_jiajia.project_list),
+    path('suite_list/', views_jiajia.suite_list),
+    path('suite_list/SearchForSuite/', views_suite.SearchForSuite),
 
+
+    path('task_list/', views_jiajia.task_list),
+    path('reports/', views_jiajia.reports),
     # 新建任务的接口
     url(r'^add_task/$', views_job.create_job),
     # 编辑任务的接口

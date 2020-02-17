@@ -158,13 +158,12 @@ def SearchForSuite(request):
             # count不为0时
             total_page_num = math.ceil(count/perPageItemNum)
 
-        data['code'] = 200
-        data['msg'] = '操作成功'
-        data['data'] = {'total':count,
+
+        data = {'total':count,
                         'total_page_num': total_page_num,
                         'page_num':current_page,
                         'perPageItemNum':perPageItemNum,
-                        'data':data_list}
+                        'rows':data_list}
 
         return HttpResponse(json.dumps(data, ensure_ascii=False))
     else:
@@ -205,10 +204,8 @@ def SearchForSuite_by_project_id(request):
         for dic in suit_list:
             turn_dic_to_be_JSON_serializable(dic)
 
-        data['code'] = 200
-        data['msg'] = '操作成功'
-        data['data'] = {'total':count,
-                        'data':suit_list}
+        data = {'total':count,
+                        'rows':suit_list}
 
         return HttpResponse(json.dumps(data, ensure_ascii=False))
 
