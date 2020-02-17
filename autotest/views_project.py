@@ -46,7 +46,7 @@ def edit_project(request):
         project_name = request.POST.get('project_name',None)
         description = request.POST.get('description',None)
         #校验必填字段是否为空
-        if not all ([project_id,project_code,project_name]):
+        if not all ([id,project_code,project_name]):
             data['code'] = '1001'
             data['msg'] = '必填项为空'
             return HttpResponse(json.dumps(data, ensure_ascii=False))

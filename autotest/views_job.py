@@ -124,7 +124,7 @@ def edit_job(request):
             suite_list = new_suite_list
 
         #校验
-        if not all ([job_id,project_id,job_name,job_type]):
+        if not all ([project_id,job_name,job_type]):
             data['code'] = '1001'
             data['msg'] = '必填项为空'
             return HttpResponse(json.dumps(data, ensure_ascii=False))

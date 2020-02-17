@@ -66,11 +66,11 @@ def delete_suite(request):
 def edit_suite(request):
     if request.method == "POST":
         data = {}
-        suite_id = request.POST.get('suite_id',None)
+        suite_id = request.POST.get('id',None)
         project_id = request.POST.get('project_id',None)
         suite_name = request.POST.get('suite_name',None)
         description = request.POST.get('description',None)
-        if not all ([suite_id,project_id,suite_name]):
+        if not all ([id,project_id,suite_name]):
             data['code'] = '1001'
             data['msg'] = '必填项为空'
             return HttpResponse(json.dumps(data, ensure_ascii=False))
@@ -136,7 +136,7 @@ def SearchForSuite(request):
         # print('=============count:',count)
         # 查询具体数据
         suit_list = list(suite_objs.values('id','project_id','project__project_name','suite_name',
-                                   'description','time_created'))
+                                   'description','time_created','time_updated'))
 
         #分页
         from autotest.myUtil.pager import Pagination
