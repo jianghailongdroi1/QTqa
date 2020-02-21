@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% block title %}Add Suite{% endblock %}
+{% load staticfiles %}
+{% block content %}
+                <div class="main-content">
+                    <div class="breadcrumbs" id="breadcrumbs">
+                        <script type="text/javascript">
+                            try{ace.settings.check('breadcrumbs' , 'fixed')}catch(e){}
+                        </script>
+                        <ul class="breadcrumb">
+                            <li>
+                                <i class="icon-home home-icon"></i>
+                                <a href="#">Home</a>
+                            </li>
+                            <li class="active">新增 Suite</li>
+                        </ul><!-- .breadcrumb -->
+                        <div class="nav-search" id="nav-search">
+                            <form class="form-search">
+                                <span class="input-icon">
+                                    <input type="text" placeholder="Search ..." class="nav-search-input" id="nav-search-input" autocomplete="off" />
+                                    <i class="icon-search nav-search-icon"></i>
+                                </span>
+                            </form>
+                        </div><!-- #nav-search -->
+                    </div>
+                    <div class="page-content">
+                        <div class="page-header">
+                            <h1>
+                                项目管理
+                                <small>
+                                    <i class="icon-double-angle-right"></i>
+                                    新增 Suite
+                                </small>
+                            </h1>
+                        </div><!-- /.page-header -->
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <!-- PAGE CONTENT BEGINS -->
+                                <form class="form-horizontal" role="form">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Suite名称 </label>
+                                        <div class="col-sm-9">
+                                            <input type="text" id="suite_name" placeholder=" Suite名称" class="col-xs-10 col-sm-5" />
+                                        </div>
+                                    </div>
+                                    <div class="space-4"></div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">所属项目</label>
+                                        <div class="col-sm-9">
+                                            <select class="col-xs-10 col-sm-5" id="project_code">
+
+                                                <option value="">请选择</option>
+
+                                            </select>
+<!--                                             <input type="hidden" value="" name="for_projectname" id="for_projectname"/>
+ -->
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">Suite描述 </label>
+                                        <div class="col-sm-9">
+                                            <input type="text" id="description" placeholder="Suite简介" class="col-xs-10 col-sm-5" />
+                                        </div>
+                                    </div>
+<!--                                     <div class="form-group" id="default-buttons">
+                                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1">是否执行冒烟测试：</label>
+                                            <div class="col-sm-9">
+                                                <input id="id-button-borders" checked="" type="checkbox" class="ace ace-switch ace-switch-5" />
+                                                <span class="lbl"></span>
+                                            </div>
+                                         </label>
+                                    </div>
+                                    <div class="form-group" id="default-buttons">
+                                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1">是否有效：</label>
+                                            <div class="col-sm-9">
+                                                <input id="id-button-borders" checked="" type="checkbox" class="ace ace-switch ace-switch-5" />
+                                                <span class="lbl"></span>
+                                            </div>
+                                         </label>
+                                    </div> -->
+                                    <div class="clearfix form-actions">
+                                        <div class="col-md-offset-3 col-md-9">
+                                            <button class="btn btn-info" type="button" data-url="" onclick="requestClick(this)">
+                                                <i class="icon-ok bigger-110"></i>
+                                                保存
+                                            </button>
+                                            &nbsp; &nbsp; &nbsp;
+                                            <button class="btn" type="reset">
+                                                <i class="icon-undo bigger-110"></i>
+                                                重置
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div><!-- /.col -->
+                        </div><!-- /.row -->
+                    </div><!-- /.page-content -->
+                </div><!-- /.main-content -->
+<!--                 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+ -->
+<script src="http://www.jq22.com/jquery/jquery-2.1.1.js"></script>
+
+        <script type="text/javascript">
+     function getUrlParam(name) {
+             var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象  
+             var r = window.location.search.substr(1).match(reg);  //匹配目标参数   
+             if (r != null) return unescape(r[2]); return null; //返回参数值  
+             };
+             
+
+
+                $.ajax({
+                    type:"get",
+                    url:"/SearchForProject/",
+                    dataType: "json",
+                    success:function(res){
+                        var list = res.all_projects;
+                        for(var i in list){
+                            $("#project_code").append("<option value='" + list[i].id + "'>" + list[i].project_name + "</option>");
+                        }
+                    }
+                });
+
+
+                function requestClick(obj) {
+                    var url = "/edit_suite/";
+                    var suite_name0 = $(" #suite_name ").val();
+                    var id = $("#project_code option:selected").val();
+                    var suite_description0 = $(" #description ").val();
+                    var p = {id:getUrlParam("id"),suite_name:suite_name0, project_id:id,description:suite_description0};
+                    console.log(obj)
+
+                    $.post(url, p,function(data, status){
+                        var json = eval("("+data+")")
+                        alert(json.msg); 
+                        })
+                }
+            
+
+
+      $.ajax({
+        type:"post",
+        url:"/SearchForSuite/",
+        dataType: "json",
+        data:{
+            suite_id: getUrlParam("id")
+        } ,
+        success:function(res){
+            var suitelist = res.rows;
+            $("#suite_name").val(suitelist[0].suite_name);
+            $("#description").val(suitelist[0].description);
+
+             $.ajax({
+                    type:"post",
+                    url:"/SearchForProject/",
+                    data:{
+                        suite_id: getUrlParam("id")
+                    },
+                    dataType: "json",
+                    success:function(res){
+                        var list = res.rows;
+                        for(var i in list){
+                            $("#project_code").append("<option value='" + list[i].id + "'>" + list[i].project_name + "</option>")
+                        }; 
+                        // $("#related_suite").trigger("liszt:updated");
+                        
+                        $("#project_code option[value='"+list[0].id+"']").attr("selected",true);
+           
+                        }
+                    })
+
+            }
+        });          
+
+</script>
+{% endblock %}

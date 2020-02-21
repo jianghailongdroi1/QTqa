@@ -178,3 +178,15 @@ class suite(models.Model):
         return self.suite_name
 
 
+class UserInfo(models.Model):
+    class Meta:
+        verbose_name = '用户信息'
+        db_table = 'UserInfo'
+
+    username = models.CharField('用户名', max_length=20, unique=True, null=False)
+    password = models.CharField('密码', max_length=20, null=False)
+    email = models.EmailField('邮箱', null=False, unique=True)
+    status = models.IntegerField('有效/无效', default=1)
+    # user_type = models.ForeignKey(UserType, on_delete=models.CASCADE)
+    def __str__(self):
+        return self.UserInfo

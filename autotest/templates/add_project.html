@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Add Suite{% endblock %}
+{% load staticfiles %}
+{% block content %}
+                <div class="main-content">
+                    <div class="breadcrumbs" id="breadcrumbs">
+                        <script type="text/javascript">
+                            try{ace.settings.check('breadcrumbs' , 'fixed')}catch(e){}
+                        </script>
+                        <ul class="breadcrumb">
+                            <li>
+                                <i class="icon-home home-icon"></i>
+                                <a href="#">首页</a>
+                            </li>
+                            <li class="active">新增项目</li>
+                        </ul><!-- .breadcrumb -->
+                        <div class="nav-search" id="nav-search">
+                            <form class="form-search">
+                                <span class="input-icon">
+                                    <input type="text" placeholder="Search ..." class="nav-search-input" id="nav-search-input" autocomplete="off" />
+                                    <i class="icon-search nav-search-icon"></i>
+                                </span>
+                            </form>
+                        </div><!-- #nav-search -->
+                    </div>
+                    <div class="page-content">
+                        <div class="page-header">
+                            <h1>
+                                项目管理
+                                <small>
+                                    <i class="icon-double-angle-right"></i>
+                                    新增项目
+                                </small>
+                            </h1>
+                        </div><!-- /.page-header -->
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <!-- PAGE CONTENT BEGINS -->
+                                <form class="form-horizontal" role="form">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">项目名称 </label>
+                                        <div class="col-sm-9">
+                                            <input type="text" id="project_name" placeholder="projectname" class="col-xs-10 col-sm-5" />
+                                        </div>
+                                    </div>
+                                    <div class="space-4"></div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-2"> 项目code </label>
+                                        <div class="col-sm-9">
+                                            <input type="text" id="project_code" placeholder="projectcode" class="col-xs-10 col-sm-5" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right" for="form-field-1">项目描述 </label>
+                                        <div class="col-sm-9">
+                                            <input type="text" id="project_description" placeholder="项目简介" class="col-xs-10 col-sm-5" />
+                                        </div>
+                                    </div>
+                                    <div class="clearfix form-actions">
+                                        <div class="col-md-offset-3 col-md-9">
+                                            <button class="btn btn-info" type="button" data-url="" data-id="add_projetct_request" onclick="requestClick(this)">
+                                                <i class="icon-ok bigger-110"></i>
+                                                保存
+                                            </button>
+                                            &nbsp; &nbsp; &nbsp;
+                                            <button class="btn" type="reset">
+                                                <i class="icon-undo bigger-110"></i>
+                                                重置
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div><!-- /.col -->
+                        </div><!-- /.row -->
+                    </div><!-- /.page-content -->
+                </div><!-- /.main-content -->
+                <script type="text/javascript">
+                function requestClick(obj) {
+                    var url = $(obj).attr('data-url');
+                    var id = $(obj).attr('data-id');
+                    var project_name0 = $(" #project_name ").val();
+                    var project_code0 = $(" #project_code ").val();
+                    var project_description0 = $(" #project_description ").val();
+                    var p = {project_name:project_name0, project_code:project_code0,project_description:project_description0};
+                    console.log(obj)
+
+                    $.post(url, p,function(data, status){
+                        var json = eval("("+data+")")
+                        alert(json.msg); 
+                        })
+                }
+                </script>
+    
+{% endblock %}

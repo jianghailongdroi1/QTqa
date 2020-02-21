@@ -30,12 +30,15 @@ def create_job(request):
 
         #传入的suite_list是str格式，需进行转化
         if suite_list is not None:
-            new_suite_list = []
+            #判断suite_list为'[]',即为空的情况
+            if suite_list == '[]':
+                suite_list = None
+            else:
+                new_suite_list = []
+                for n in  suite_list[1:-1].split(','):
+                    new_suite_list.append(int(n))
 
-            for n in  suite_list[1:-1].split(','):
-                new_suite_list.append(int(n))
-
-            suite_list = new_suite_list
+                suite_list = new_suite_list
 
         #校验
         if not all ([project_id,job_name,job_type]):
@@ -113,15 +116,17 @@ def edit_job(request):
         description = request.POST.get('description',None)
 
 
-
         #传入的suite_list是str格式，需进行转化
         if suite_list is not None:
-            new_suite_list = []
+            #判断suite_list为'[]',即为空的情况
+            if suite_list == '[]':
+                suite_list = None
+            else:
+                new_suite_list = []
+                for n in  suite_list[1:-1].split(','):
+                    new_suite_list.append(int(n))
 
-            for n in  suite_list[1:-1].split(','):
-                new_suite_list.append(int(n))
-
-            suite_list = new_suite_list
+                suite_list = new_suite_list
 
         #校验
         if not all ([project_id,job_name,job_type]):
@@ -271,15 +276,11 @@ def query_jobs(request):
         else:
             # count不为0时
             total_page_num = math.ceil(count/perPageItemNum)
-
-
-        data['code'] = 200
-        data['msg'] = '操作成功'
-        data['data'] = {'total':count,
+        data = {'total':count,
                         'total_page_num': total_page_num,
                         'page_num':current_page,
                         'perPageItemNum':perPageItemNum,
-                        'data':data_list}
+                        'rows':data_list}
 
 
         return HttpResponse(json.dumps(data, ensure_ascii=False))
@@ -306,9 +307,16 @@ def query_job_detail(request):
                                    'job_name','time_start_excute','iterval_time',
                                    'maximum_times','type','status','description',
                                    'enable','time_created','time_updated')[0]
+        job_obj = models.CronJob.objects.get(id=job_id)
+        suites =job_obj.suite_set.filter(effective_flag= 1).values('id','suite_name')
+        suite_list = []
+        for suite in suites:
+            suite_list.append(suite)
+
         from autotest.myUtil.commonFunction import turn_dic_to_be_JSON_serializable
 
         job_data  = turn_dic_to_be_JSON_serializable(job_data)
+        job_data['suite_list']=suite_list
 
         data['code'] = 200
         data['msg'] = '操作成功'
@@ -317,7 +325,6 @@ def query_job_detail(request):
         return HttpResponse(json.dumps(data, ensure_ascii=False))
     else:
         return render_to_response('job_list.html')
-
 #启动任务,新建子任务
 def enable_job(request):
     if request.method == "POST":

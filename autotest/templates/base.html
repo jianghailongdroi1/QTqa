@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<title>HttpRunner 定时任务管理后台</title>
+		<title>HttpRunner 任务管理后台</title>
         {% load staticfiles %}
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<!-- basic styles -->
@@ -21,9 +21,12 @@
 		<![endif]-->
 		<!-- page specific plugin styles -->
 		<!-- ace styles -->
+		<link rel="stylesheet" href="{% static 'assets/css/chosen.css'%}" />
+		<link rel="stylesheet" href="{% static 'assets/css/jquery-ui-1.10.3.custom.min.css '%}" />
 		<link rel="stylesheet" href="{% static 'assets/css/ace.min.css'%}" />
 		<link rel="stylesheet" href="{% static 'assets/css/ace-rtl.min.css'%}" />
 		<link rel="stylesheet" href="{% static 'assets/css/ace-skins.min.css'%}" />
+
 		<!--[if lte IE 8]>
 		  <link rel="stylesheet" href="{% static 'assets/css/ace-ie.min.css'%}" />
 		<![endif]-->
@@ -46,7 +49,7 @@
 					<a href="#" class="navbar-brand">
 						<small>
 							<i class="icon-leaf"></i>
-							HttpRunner 定时任务管理后台
+							HttpRunner 任务管理后台
 						</small>
 					</a><!-- /.brand -->
 				</div><!-- /.navbar-header -->
@@ -156,20 +159,20 @@
 						<li>
 							<a href="#" class="dropdown-toggle">
 								<i class="icon-calendar"></i>
-								<span class="menu-text"> 定时任务配置 </span>
+								<span class="menu-text"> 任务配置 </span>
 								<b class="arrow icon-angle-down"></b>
 							</a>
 							<ul class="submenu">
 								<li>
 									<a href="/add_task/">
 										<i class="icon-double-angle-right"></i>
-										新增定时任务
+										新增任务
 									</a>
 								</li>
 								<li>
 									<a href="/task_list/">
 										<i class="icon-double-angle-right"></i>
-										定时任务列表
+										任务配置详情列表
 									</a>
 								</li>
 							</ul>
@@ -182,7 +185,7 @@
 							</a>
 							<ul class="submenu">
 								<li>
-									<a href="/reports/">
+									<a href="/task_run_details/">
 										<i class="icon-double-angle-right"></i>
 										查看报告
 									</a>
@@ -244,13 +247,17 @@
 		<script src="{% static 'assets/js/flot/jquery.flot.pie.min.js' %}"></script>
 		<script src="{% static 'assets/js/flot/jquery.flot.resize.min.js' %}"></script>
 		<!-- ace scripts -->
-		<script src="{% static 'assets/js/ace-elements.min.js' %}"></script>
-		<script src="{% static 'assets/js/ace.min.js' %}"></script>
+		<script src="{% static 'assets/js/chosen.jquery.min.js' %}"></script>
+		<script src="{% static 'assets/js/bootstrap-tag.min.js' %}"></script>
 		<script src="{% static 'assets/js/date-time/bootstrap-timepicker.min.js' %}"></script>
 		<script src="{% static 'assets/js/jqGrid/jquery.jqGrid.min.js' %}"></script>
 		<script src="{% static 'assets/js/jqGrid/i18n/grid.locale-en.js' %}"></script>
 		<script src="{% static 'assets/js/typeahead-bs2.min.js' %}"></script>
 		<script src="http://www.jq22.com/jquery/bootstrap-3.3.4.js"></script>
+		<script src="{% static 'assets/js/chosen.jquery.min.js' %}"></script>
+		<script src="{% static 'assets/js/ace-elements.min.js' %}"></script>
+		<script src="{% static 'assets/js/ace.min.js' %}"></script>
+
 
 		<!-- inline scripts related to this page -->
 
