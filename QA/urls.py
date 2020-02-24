@@ -104,6 +104,8 @@ urlpatterns = [
     # 暂停任务
     url(r'^unenable_job/$', views_job.unenable_job),
 
+    url(r'^reports/(\d+)$', views_jiajia.report),
+
     # 新建suite的接口
     url(r'^add_suite/$', views_suite.add_suite),
     # 删除suite的接口

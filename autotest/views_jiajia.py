@@ -80,3 +80,7 @@ def login(request):
             return HttpResponse(json.dumps(data, ensure_ascii=False))
     elif request.method == 'GET':
         return render_to_response("login.html")
+
+def report(request,name):
+    request.method == 'get'
+    return render_to_response('reports/'+ name +'.html')

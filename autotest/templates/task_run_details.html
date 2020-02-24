@@ -92,7 +92,7 @@
 						{name:'cronjob__job_name',index:'cronjob__job_name', width:150,editable: true,editoptions:{size:"20",maxlength:"30"}},
                         {name:'cronjob__type',index:'cronjob__type', width:150,editable: true,formatter:job_type,editoptions:{size:"20",maxlength:"30"}},
                         {name:'executed_result',index:'executed_result', width:150,editable: true,editoptions:{size:"20",maxlength:"30"}},
-						{name:'link_for_result',index:'link_for_result', width:90, editable: true},
+						{name:'link_for_result',index:'link_for_result', width:90, editable: true, formatter:link},
 						{name:'time_start_excute',index:'time_start_excute', width:90, editable: true,editable: false,editoptions:{value:"FE:FedEx;IN:InTime;TN:TNT;AR:ARAMEX"}},
 						{name:'time_end_excute',index:'time_updated', width:150, sortable:false,editable: false}
 					], 
@@ -275,6 +275,13 @@
 						}
 					}
 				)
+
+
+				function link(cellvalue, options, rowObject) {
+					file_name =  rowObject.link_for_result.substring(0,10)
+                    var editHtml="<a href=\"/reports/"+file_name+"\">"+rowObject.link_for_result+"</a>";
+                    return editHtml
+                    }
 
 
 				function style_edit_form(form) {
