@@ -69,7 +69,7 @@
 </script>
 <![endif]-->
 		<script type="text/javascript">
-			if("ontouchend" in document) document.write("<script src='assets/js/jquery.mobile.custom.min.js'>"+"<"+"/script>");
+			if("ontouchend" in document) document.write("<script src='{% static '/assets/js/jquery.mobile.custom.min.js' %}'>"+"<"+"/script>");
 		</script>
 		<script src="http://www.jq22.com/jquery/bootstrap-3.3.4.js"></script>
 <!-- 		<script src="assets/js/typeahead-bs2.min.js"></script>
@@ -82,7 +82,7 @@
 				var pager_selector = "#grid-pager";
 				jQuery(grid_selector).jqGrid({
 					//direction: "rtl",
-					url: "SearchForProject/",
+					url: "/SearchForProject/",
 					datatype: "json",
 					mtype: "POST",
 					colNames:['ID','项目编号','项目名称','项目描述','创建时间','更新时间','操作'],
@@ -396,14 +396,18 @@ function link(cellvalue, options, rowObject) {
 
 
  function deleteproject(id){
-                 	var url = 'delete_project/';
-                    var p = {job_id:id};
+                 	var url = '/delete_project/';
+                    var p = {project_id:id};
                     $.post(url,p,function(data, status){
                         // var json = eval("("+data+")")
                         var json = eval("("+data+")")
-                        alert(json.msg); 
-                        $("#grid_selector").trigger("reloadGrid");
-                    })
+                       alert(json.msg); 
+                        if(json.code == '200'){
+                            window.location.href = "/project_list/";
+                        }else{
+                        alert(json.msg)
+                    }
+                        })
 
                 }
 

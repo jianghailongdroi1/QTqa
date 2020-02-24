@@ -155,7 +155,7 @@
 
     $.ajax({
                     type:"get",
-                    url:"SearchForProject/",
+                    url:"/SearchForProject/",
                     dataType: "json",
                     success:function(res){
                         var list = res.all_projects;
@@ -175,7 +175,7 @@
 
     $.ajax({
         type:"post",
-        url:"job_details/",
+        url:"/job_details/",
         dataType: "json",
         data:{
             job_id: getUrlParam("id")
@@ -187,7 +187,7 @@
             $("#project_code option[value='"+suitelist.project_id+"']").attr("selected",true);
             $.ajax({
                     type:"post",
-                    url:"SearchForSuites/",
+                    url:"/SearchForSuite/",
                     data:{
                         project_id: suitelist.project_id
                     },
@@ -225,7 +225,7 @@
         $("#related_suite").empty();
         $.ajax({
                     type:"post",
-                    url:"SearchForSuites/",
+                    url:"/SearchForSuites/",
                     data:{
                         project_id: id0
                     },

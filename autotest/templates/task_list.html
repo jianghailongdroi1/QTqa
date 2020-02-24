@@ -60,7 +60,7 @@
 <![endif]-->
 		<!--[if !IE]> -->
 		<script type="text/javascript">
-			window.jQuery || document.write("<script src='assets/js/jquery-2.0.3.min.js'>"+"<"+"/script>");
+			window.jQuery || document.write("<script src='{% static 'assets/js/jquery-2.0.3.min.js' %}'>"+"<"+"/script>");
 		</script>
 		<!-- <![endif]-->
 		<!--[if IE]>
@@ -69,7 +69,7 @@
 </script>
 <![endif]-->
 		<script type="text/javascript">
-			if("ontouchend" in document) document.write("<script src='assets/js/jquery.mobile.custom.min.js'>"+"<"+"/script>");
+			if("ontouchend" in document) document.write("<script src='{% static '/assets/js/jquery.mobile.custom.min.js' %}'>"+"<"+"/script>");
 		</script>
 		<script src="http://www.jq22.com/jquery/bootstrap-3.3.4.js"></script>
 <!-- 		<script src="assets/js/typeahead-bs2.min.js"></script>
@@ -82,10 +82,10 @@
 				var pager_selector = "#grid-pager";
 				jQuery(grid_selector).jqGrid({
 					//direction: "rtl",
-					url: "query_jobs/",
+					url: "/query_jobs/",
 					datatype: "json",
 					mtype: "POST",
-					colNames:['ID','任务名称','项目编号','项目名称','任务类型','任务描述','执行开始时间','执行间隔时间','执行次数','创建时间','更新时间','操作','查看任务执行结果'],
+					colNames:['ID','任务名称','项目编号','项目名称','任务类型','任务描述','执行开始时间','执行间隔时间','执行次数','创建时间','更新时间','操作','查看任务执行结果','是否启用'],
 					colModel:[
 						// {name:'myac',index:'', width:80, fixed:true, sortable:false, resize:false,
 						// 	formatter:'actions', 
@@ -116,6 +116,7 @@
 						// {name:'results',index:'results', width:150, sortable:false,editable: false},
 						{name:'time_updated',index:'time_updated', width:150, sortable:false,editable: false,formatter:link},
 
+
 						// { formatter: function typeformatter(cellvalue, options, rowObject) {
       //                   var editHtml="<a href=\"modify_task?id="+rowObject.id+"\">编辑</a>" + "<a href=\"javascript:void(0)\" onclick=\"requestClick(this)\"> 删除</a>"
       //                   return editHtml
@@ -126,6 +127,8 @@
                         return details
 							}
 						},
+						{name:'enable',index:'enable', width:150, sortable:false,editable: false,hidden:true},
+
 
 					], 
 					viewrecords : true,
@@ -197,15 +200,15 @@
 				// $("#grid_selector").jqGrid('editGridRow', rowid, {properties} ); 
 
 				function link(cellvalue, options, rowObject) {
-					
-
-                    
-                    var editHtml="<a href='#' onClick ='enablejob("+rowObject.id+");'>启用 </a>" + "<a href=\"/modify_task?id="+rowObject.id+"\">编辑</a>" + "<a href='#' onClick ='deletejob("+rowObject.id+");'> 删除</a>";
-
-                    return editHtml
-
+                    if (rowObject.enable == "1") {
+                    	a='停用';
+                    }else{
+                    	a = "启用"
                     }
-                 
+                 var editHtml="<a href='#' id= 'enable_id' onClick='enablejob("+rowObject.id+","+rowObject.enable+")'>" +a+ "</a>" + "<a href=\"/modify_task?id="+rowObject.id+"\"> 编辑</a>" + "<a href='#' onClick ='deletejob("+rowObject.id+");'> 删除</a>";
+                  return editHtml
+                }
+                                 
 
 				 function time (cellvalue, options, rowObject) {
 				  var time = cellvalue + "分钟"
@@ -481,20 +484,44 @@
                     $.post(url,p,function(data, status){
                         // var json = eval("("+data+")")
                         var json = eval("("+data+")")
-                        alert(json.msg); 
-                        $("#grid_selector").trigger("reloadGrid");
+                       if (json.code =='200') {
+                       		alert("任务已删除")
+                       		window.location.href = "/task_list/";
+                       	}
                     })
 
                 };
 
-               function enablejob(id){
-                 	var url = '/enable_job/';
-                    var p = {job_id:id};
-                    $.post(url,p,function(data, status){
-                        var json = eval("("+data+")")
-                        alert(json.msg); 
+              function enablejob(job_id,isenable){
+                 	if (isenable == "1") {
+                 		var url = '/unenable_job/';
+                        var p = {job_id:job_id};
+                       $.post(url,p,function(data, status){
+                       	var json = eval("("+data+")")
+                       	if (json.code =='200') {
+                       		alert("任务已停用")
+                       		window.location.href = "/task_list/";
+                       	}
+                       	else{
+                 	    	alert(json.msg)
+                 	    }
+                 	    })
+
+                    }else{
+                 		var url = '/enable_job/';
+                        var p = {job_id:job_id};
+                       $.post(url,p,function(data, status){
+                       	var json = eval("("+data+")")
+                       	if (json.code =='200') {
+                       		alert("任务已启用")
+                       		window.location.href = "/task_list/";
+                 	    }else{
+                 	    	alert(json.msg)
+                 	    }
                     })
-                }
+                   }
+                  };
+
 
 		</script>
 {% endblock %}

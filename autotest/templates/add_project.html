@@ -86,8 +86,12 @@
 
                     $.post(url, p,function(data, status){
                         var json = eval("("+data+")")
-                        alert(json.msg); 
-                        })
+                         if(json.code == '200'){
+                            window.location.href = "/project_list/";
+                        }else{
+                        alert(json.msg)
+                    }
+                });
                 }
                 </script>
     

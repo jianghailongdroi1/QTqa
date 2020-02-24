@@ -82,7 +82,7 @@
 				var pager_selector = "#grid-pager";
 				jQuery(grid_selector).jqGrid({
 					//direction: "rtl",
-					url: "SearchForSuite/",
+					url: "/SearchForSuite/",
 					datatype: "json",
 					mtype: "POST",
 					colNames:['ID','Suite名','所属项目编号','所属项目名称','Suite描述','创建时间','更新时间','操作'],
@@ -400,8 +400,12 @@
                         // var json = eval("("+data+")")
                         var json = eval("("+data+")")
                         alert(json.msg); 
-                        $("#grid_selector").trigger("reloadGrid");
-                    })
+                        if(json.code == '200'){
+                            window.location.href = "/suite_list/";
+                        }else{
+                        alert(json.msg)
+                    }
+                        })
 
                 };
 

@@ -74,26 +74,15 @@ urlpatterns = [
     path('delete_project/', views_project.delete_project),
     #项目查询接口(jiajia)
     url(r'^SearchForProject/$', views_project.SearchForProject),
-    url(r'^add_suite/SearchForProject/$', views_project.SearchForProject),
-    url(r'^task_list/modify_task/SearchForProject/$', views_project.SearchForProject),
-    url(r'^task_list/modify_task/SearchForSuites/$', views_suite.SearchForSuite),
-
-    url(r'task_list/add_task/SearchForProject/$',views_project.SearchForProject),
-    url(r'^project_list/SearchForProject/$', views_project.SearchForProject),
-    url(r'^add_task/SearchForProject/$', views_project.SearchForProject),
-    url(r'^add_task/SearchForSuites/$', views_suite.SearchForSuite),
     path('project_list/', views_jiajia.project_list),
     path('suite_list/', views_jiajia.suite_list),
-    path('suite_list/SearchForSuite/', views_suite.SearchForSuite),
     path('job_details/', views_job.query_job_detail),
-    path('job_details/', views_job.query_job_detail),
-    path('task_list/modify_task/job_details/', views_job.query_job_detail),
     path('task_run_details/',views_jiajia.task_run_details),
     path('modify_project/', views_jiajia.modify_project),
     path('modify_suite/', views_jiajia.modify_suite),
 
-    url(r'^task_list/add_task/$', views_job.create_job),
-    url(r'^task_list/modify_task/$',views_jiajia.modify_task),
+    url(r'^add_task/$', views_job.create_job),
+    url(r'^modify_task/$',views_jiajia.modify_task),
     path('task_list/', views_jiajia.task_list),
     path('reports/', views_jiajia.reports),
     path('login/', views_jiajia.login),
@@ -108,7 +97,7 @@ urlpatterns = [
     # 删除任务的接口
     url(r'^delete_job/$', views_job.delete_job),
     # 查询任务的接口
-    url(r'^task_list/query_jobs/$', views_job.query_jobs),
+    url(r'^query_jobs/$', views_job.query_jobs),
 
     # 启动任务，创建对应的子任务
     url(r'^enable_job/$', views_job.enable_job),
@@ -124,8 +113,6 @@ urlpatterns = [
     #查询suite接口_post
     url(r'^SearchForSuite/$', views_suite.SearchForSuite),
     # 查询suite接口
-    url(r'^SearchForSuite_by_project_id/$', views_suite.SearchForSuite),
-
     # 查询执行结果接口
     url(r'^query_job_results/$', views_job_result.query_job_results),
 ]

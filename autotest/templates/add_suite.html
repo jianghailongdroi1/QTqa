@@ -105,7 +105,7 @@
 
                 $.ajax({
                     type:"get",
-                    url:"SearchForProject/",
+                    url:"/SearchForProject/",
                     dataType: "json",
                     success:function(res){
                         var list = res.all_projects;
@@ -120,14 +120,18 @@
                     var url = $(obj).attr('data-url');
                     var suite_name0 = $(" #suite_name ").val();
                     var id = $("#project_code option:selected").val();
-                    var suite_description0 = $(" #project_description ").val();
+                    var suite_description0 = $(" #description ").val();
                     var p = {suite_name:suite_name0, project_id:id,description:suite_description0};
                     console.log(obj)
 
                     $.post(url, p,function(data, status){
                         var json = eval("("+data+")")
-                        alert(json.msg); 
-                        })
+                       if(json.code == '200'){
+                            window.location.href = "/suite_list/";
+                        }else{
+                        alert(json.msg)
+                    }
+                        });
                 }
             
 

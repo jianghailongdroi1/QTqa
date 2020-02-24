@@ -91,11 +91,16 @@
                     var project_name0 = $(" #project_name ").val();
                     var project_code0 = $(" #project_code ").val();
                     var project_description0 = $(" #project_description ").val();
-                    var p = {id:getUrlParam("id"), project_name:project_name0, project_code:project_code0,project_description:project_description0};
+                    var p = {id:getUrlParam("id"), project_name:project_name0, project_code:project_code0,description:project_description0};
                     $.post(url, p,function(data, status){
                         var json = eval("("+data+")")
-                        alert(json.msg); 
-                        })
+
+                        if(json.code == '200'){
+                            window.location.href = "/task_list/";
+                        }else{
+                        alert(json.msg)
+                    }
+                        });
                 }
 
 

@@ -22,10 +22,10 @@
                     <div class="page-content">
                         <div class="page-header">
                             <h1>
-                                定时任务配置
+                                任务配置
                                 <small>
                                     <i class="icon-double-angle-right"></i>
-                                    新增定时任务
+                                    新增任务
                                 </small>
                             </h1>
                         </div><!-- /.page-header -->
@@ -97,14 +97,14 @@
                                             <input type="text" id="description" placeholder="用一句话来描述这个任务吧~" class="col-xs-10 col-sm-5"/>
                                         </div>
                                     </div>
-                                    <div class="form-group" id="default-buttons">
+                                  <!--   <div class="form-group" id="default-buttons">
                                             <label class="col-sm-3 control-label no-padding-right" for="form-field-1">任务是否开启：</label>
                                             <div class="col-sm-9">
                                                 <input id="id-button-borders" checked="" type="checkbox" class="ace ace-switch ace-switch-5" />
                                                 <span class="lbl"></span>
                                             </div>
                                          </label>
-                                    </div>
+                                    </div> -->
                                     <div class="clearfix form-actions">
                                         <div class="col-md-offset-3 col-md-9">
                                            <button class="btn btn-info" type="button" data-url="" data-id="add_task" onclick="requestClick(this)">
@@ -196,7 +196,7 @@
 
         $.ajax({
                     type:"post",
-                    url:"/SearchForSuites/",
+                    url:"/SearchForSuite/",
                     data:{
                         project_id: id0
                     },
@@ -210,23 +210,9 @@
                         }
                     }
            })
-        // $(".related_suite").chosen().change(function(){
-        //                 $("#related_suite").trigger("liszt:updated");
-        //                 })
     });
     
     
-        
-
-//     function fun(){
-//         var select = document.getElementById("related_suite");
-//         var str = [];
-//         for(i=0;i<select.length;i++){
-//             if(select.options[i].selected){
-//                 str.push(select[i].value);
-//         }
-//     }
-// }
 
 
     function requestClick(obj) {
@@ -268,8 +254,12 @@
                     jQuery.ajaxSettings.traditional = true;
                     $.post(url, p, function(data, status){
                         var json = eval("("+data+")")
-                        alert(json.msg); 
-                        })
+                         if(json.code == '200'){
+                            window.location.href = "/task_list/";
+                        }else{
+                        alert(json.msg)
+                    }
+                        });
                 }
             
 </script>

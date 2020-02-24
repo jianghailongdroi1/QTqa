@@ -133,8 +133,12 @@
 
                     $.post(url, p,function(data, status){
                         var json = eval("("+data+")")
-                        alert(json.msg); 
-                        })
+                        if(json.code == '200'){
+                            window.location.href = "/suite_list/";
+                        }else{
+                        alert(json.msg)
+                    }
+                        });
                 }
             
 

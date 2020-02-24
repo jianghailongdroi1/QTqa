@@ -71,13 +71,13 @@
 															<input type="checkbox" class="ace" />
 															<span class="lbl"> 记住我</span>
 														</label>
-														<button class="width-35 pull-right btn btn-sm btn-primary" value="Login" onclick="login(this)">
+														<button type= "button" class="width-35 pull-right btn btn-sm btn-primary" value="Login" onclick="login(this)">
 															<i class="icon-key"></i>
 															登录
 														</button>
 													</div>
-<!-- 													<div class="space-4"></div>
- -->										</form>
+													<div class="space-4"></div>
+										</form>
 <!-- 
 											<div class="social-or-login center">
 												<span class="bigger-110">Or Login Using</span>
@@ -104,7 +104,7 @@
 												</a>
 											</div>
 											<div>
-												<a href="/register/" onclick="show_box('signup-box'); return false;" class="user-signup-link">
+												<a href="#" onclick="show_box('signup-box'); return false;" class="user-signup-link">
 													注册
 													<i class="icon-arrow-right"></i>
 												</a>
@@ -237,7 +237,7 @@
 </script>
 <![endif]-->
 		<script type="text/javascript">
-			if("ontouchend" in document) document.write("<script src='/assets/js/jquery.mobile.custom.min.js'>"+"<"+"/script>");
+			if("ontouchend" in document) document.write("<script src= '{% static '/assets/js/jquery.mobile.custom.min.js' %}'>"+"<"+"/script>");
 		</script>
 		<!-- inline scripts related to this page -->
 		<script type="text/javascript">
@@ -251,11 +251,17 @@
                     var url = "/register/";
                     var username0 = $(" #username ").val();
                     var email0 = $("#email").val();
-                    var password0 = $(" #password").val();
+                    var password0 = $(" #register_password").val();
                     var p = {username:username0, email:email0,password:password0};
                     console.log(obj)
 
-                    $.post(url, p,function(data, status){
+                    var pwd = $("#register_password").val();
+                    var pwd1 = $("#confirmpassword").val();
+                    console.log(pwd)
+                    console.log(pwd1)
+
+                    if(pwd == pwd1){
+                    	$.post(url, p,function(data, status){
                         var json = eval("("+data+")")
                         if(json.code == '200'){
                         	window.location.href = "/add_project/";
@@ -263,6 +269,10 @@
                         alert(json.msg)
                         }
                         });
+                    }else{
+                    	alert("两次密码不一样")
+                    }
+                    
                 }
 
             function login(obj) {
@@ -282,11 +292,8 @@
                         }
                     });
                 }
+
                 
 		</script>
-
-
-
-
 </body>
 </html>
