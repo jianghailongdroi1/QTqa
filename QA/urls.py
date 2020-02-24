@@ -41,19 +41,6 @@ sched.start()  # 启动该脚本
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # url(r'^job_result_add_page/$', views.get_job_result_add_page, name='job_result_add_page'),
-    #
-    # url(r'^job_result_add/$', views.job_result_add, name='job_result_add'),
-    # url(r'^query_job_result/$', views.job_result_select, name='query_job_result'),
-    #
-    # #调试用新建定时任务的接口
-    # url(r'^create_cron_job/$', views.create_cron_job, name='create_cron_job'),
-    #
-    # #启动新建的定时任务，创建对应的子任务
-    # url(r'^start_cronjob_view/(?P<job_id>.*)/$', views.start_cronjob_view, name='start_cronjob_view'),
-    #
-    # #试运行定时任务的接口，入参为定时任务的id
-    # url(r'^test_run_cronjob/(?P<cronjob_id>.*)$', views.test_run_cronjob),
 
     #20200204重构
     # 测试接口
