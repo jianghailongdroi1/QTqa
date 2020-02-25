@@ -195,16 +195,16 @@ logger = logging.getLogger("django")
 
 #httprunner项目的根目录
 HTTPRUNNER_PROJECT_PATH={
-    'baidu':'D:\Script\httprunnerDemo'
+    'baidu':'H:\QTKJ\httprunnerDemo'
 }
 
 #执行httprunner的yml文件的设置
 HTTPRUNNER_RUN_SETTINGS={
     'failfast': False,
-    'report_dir': 'D:\\demo\\testreport'
+    'report_dir': os.path.join(BASE_DIR, 'autotest\\templates\\reports')
 }
 
 #轮询待执行任务的时间设置，单位是 秒
 SCHEDULED_TASKS_RUN_SETTINGS={
-    'interval_time': 600
+    'interval_time': 60
 }

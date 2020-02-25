@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 from httprunner.api import HttpRunner
 from django.http import HttpResponse,request
-import datetime,os
+import datetime,os,re
 # from httprunner.report.html.gen_report import gen_html_report
 import time,logging
 import requests
@@ -27,7 +27,12 @@ def run_httprunnner_script(suite):
         result_runner = runner.run(suite)
         summary = runner.summary
         #将报告放到summary中去
-        summary["reportpath"]=result_runner
+        #将报告地址进行处理，只保留文件名
+        pattern = r'\d+.html'
+        report = re.search(pattern, result_runner).group()
+        #保存
+        summary["reportpath"]=report
+        # summary["reportpath"]=result_runner
         # print("summary:",summary)
         logger.info("summary:"+str(summary))
 
