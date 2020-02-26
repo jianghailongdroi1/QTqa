@@ -58,7 +58,7 @@
                                     </div>
                                     <div class="clearfix form-actions">
                                         <div class="col-md-offset-3 col-md-9">
-                                            <button class="btn btn-info" type="button" data-url="" data-id="add_projetct_request" onclick="requestClick(this)">
+                                            <button class="btn btn-info" type="button" data-id="add_projetct_request" onclick="requestClick(this)">
                                                 <i class="icon-ok bigger-110"></i>
                                                 保存
                                             </button>
@@ -76,7 +76,7 @@
                 </div><!-- /.main-content -->
                 <script type="text/javascript">
                 function requestClick(obj) {
-                    var url = $(obj).attr('data-url');
+                    var url = "/autotest/3/add_project/";
                     var id = $(obj).attr('data-id');
                     var project_name0 = $(" #project_name ").val();
                     var project_code0 = $(" #project_code ").val();

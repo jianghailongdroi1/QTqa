@@ -157,7 +157,7 @@
 
     $.ajax({
                     type:"get",
-                    url:"/SearchForProject/",
+                    url:"/autotest/3/SearchForProject/",
                     dataType: "json",
                     success:function(res){
                         var list = res.all_projects;
@@ -196,7 +196,7 @@
 
         $.ajax({
                     type:"post",
-                    url:"/SearchForSuite/",
+                    url:"/autotest/1/SearchForSuite/",
                     data:{
                         project_id: id0
                     },
@@ -216,7 +216,7 @@
 
 
     function requestClick(obj) {
-                    var url = $(obj).attr('data-url');
+                    var url = "/autotest/5/create_job/";
                     var id = $(obj).attr('data-id');
                     var job_name0 = $(" #job_name ").val();
 

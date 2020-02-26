@@ -105,7 +105,7 @@
 
                 $.ajax({
                     type:"get",
-                    url:"/SearchForProject/",
+                    url:"/autotest/3/SearchForProject/",
                     dataType: "json",
                     success:function(res){
                         var list = res.all_projects;
@@ -117,7 +117,7 @@
 
 
                 function requestClick(obj) {
-                    var url = $(obj).attr('data-url');
+                    var url = "/autotest/1/add_suite/";
                     var suite_name0 = $(" #suite_name ").val();
                     var id = $("#project_code option:selected").val();
                     var suite_description0 = $(" #description ").val();

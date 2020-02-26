@@ -86,7 +86,7 @@
              };
 
                 function requestClick(obj) {
-                    var url ="/edit_project/"
+                    var url ="/autotest/3/edit_project/"
                     // var id = getUrlParam(id);
                     var project_name0 = $(" #project_name ").val();
                     var project_code0 = $(" #project_code ").val();
@@ -106,7 +106,7 @@
 
       $.ajax({
         type:"post",
-        url:"/SearchForProject/",
+        url:"/autotest/3/SearchForProject/",
         dataType: "json",
         data:{
             project_id: getUrlParam("id")

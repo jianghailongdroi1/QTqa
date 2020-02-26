@@ -82,7 +82,7 @@
 				var pager_selector = "#grid-pager";
 				jQuery(grid_selector).jqGrid({
 					//direction: "rtl",
-					url: "/SearchForProject/",
+					url: "/autotest/3/SearchForProject/",
 					datatype: "json",
 					mtype: "POST",
 					colNames:['ID','项目编号','项目名称','项目描述','创建时间','更新时间','操作'],
@@ -137,7 +137,7 @@
 							enableTooltips(table);
 						}, 0);
 					},
-					editurl: "/edit_project/",//nothing is saved
+					editurl: "/autotest/3/edit_project/",//nothing is saved
 					// caption: "jqGrid with inline editing",
 					autowidth: true,
 					reloadAfterSubmit: true,
@@ -173,12 +173,12 @@
 				//navButtons
 				jQuery(grid_selector).jqGrid('navGrid',pager_selector,
 					{ 	//navbar options
-						// edit: true,
-						// editicon : 'icon-pencil blue',
+						edit: false,
+						editicon : 'icon-pencil blue',
 						// add: true,
 						// addicon : 'icon-plus-sign purple',
-						// del: true,
-						// delicon : 'icon-trash red',
+						del: false,
+						delicon : 'icon-trash red',
 						// search: true,
 						// searchicon : 'icon-search orange',
 						refresh: true,
@@ -396,7 +396,7 @@ function link(cellvalue, options, rowObject) {
 
 
  function deleteproject(id){
-                 	var url = '/delete_project/';
+                 	var url = '/autotest/3/delete_project/';
                     var p = {project_id:id};
                     $.post(url,p,function(data, status){
                         // var json = eval("("+data+")")

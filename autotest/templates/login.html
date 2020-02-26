@@ -248,7 +248,7 @@
 			}
 
 			function register(obj) {
-                    var url = "/register/";
+                    var url = "/autotest/2/register/";
                     var username0 = $(" #username ").val();
                     var email0 = $("#email").val();
                     var password0 = $(" #register_password").val();
@@ -264,7 +264,7 @@
                     	$.post(url, p,function(data, status){
                         var json = eval("("+data+")")
                         if(json.code == '200'){
-                        	window.location.href = "/add_project/";
+                        	window.location.href = "/backend/add_project/";
                         }else{
                         alert(json.msg)
                         }
@@ -276,7 +276,7 @@
                 }
 
             function login(obj) {
-                    var url = "/login/";
+                    var url = "/autotest/2/login/";
                     var username0 = $(" #account").val();
                     // var email0 = $("#email").val();
                     var password0 = $(" #password").val();
@@ -286,7 +286,7 @@
                     $.post(url, p,function(data, status){
                         var json = eval("("+data+")")
                         if(json.code == '200'){
-                        	window.location.href = "/add_project/";
+                        	window.location.href = "/backend/add_project/";
                         }else{
                         alert(json.msg)
                         }

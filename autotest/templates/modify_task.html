@@ -155,7 +155,7 @@
 
     $.ajax({
                     type:"get",
-                    url:"/SearchForProject/",
+                    url:"/autotest/3/SearchForProject/",
                     dataType: "json",
                     success:function(res){
                         var list = res.all_projects;
@@ -175,7 +175,7 @@
 
     $.ajax({
         type:"post",
-        url:"/job_details/",
+        url:"/autotest/5/query_job_detail/",
         dataType: "json",
         data:{
             job_id: getUrlParam("id")
@@ -187,7 +187,7 @@
             $("#project_code option[value='"+suitelist.project_id+"']").attr("selected",true);
             $.ajax({
                     type:"post",
-                    url:"/SearchForSuite/",
+                    url:"/autotest/1/SearchForSuite/",
                     data:{
                         project_id: suitelist.project_id
                     },
@@ -225,7 +225,7 @@
         $("#related_suite").empty();
         $.ajax({
                     type:"post",
-                    url:"/SearchForSuites/",
+                    url:"/autotest/1/SearchForSuites/",
                     data:{
                         project_id: id0
                     },
@@ -246,7 +246,7 @@
     
 
     function requestClick(obj) {
-                    var url = "/edit_job/";
+                    var url = "/autotest/5/edit_job/";
                     // var id = $(obj).attr('data-id');
                     var job_name0 = $(" #job_name ").val();
                     var select = document.getElementById("related_suite");

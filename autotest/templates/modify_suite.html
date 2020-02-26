@@ -112,7 +112,7 @@
 
                 $.ajax({
                     type:"get",
-                    url:"/SearchForProject/",
+                    url:"/autotest/3/SearchForProject/",
                     dataType: "json",
                     success:function(res){
                         var list = res.all_projects;
@@ -124,7 +124,7 @@
 
 
                 function requestClick(obj) {
-                    var url = "/edit_suite/";
+                    var url = "/autotest/1/edit_suite/";
                     var suite_name0 = $(" #suite_name ").val();
                     var id = $("#project_code option:selected").val();
                     var suite_description0 = $(" #description ").val();
@@ -145,7 +145,7 @@
 
       $.ajax({
         type:"post",
-        url:"/SearchForSuite/",
+        url:"/autotest/1/SearchForSuite/",
         dataType: "json",
         data:{
             suite_id: getUrlParam("id")
@@ -157,7 +157,7 @@
 
              $.ajax({
                     type:"post",
-                    url:"/SearchForProject/",
+                    url:"/autotest/3/SearchForProject/",
                     data:{
                         suite_id: getUrlParam("id")
                     },

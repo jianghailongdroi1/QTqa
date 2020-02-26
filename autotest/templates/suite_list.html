@@ -82,7 +82,7 @@
 				var pager_selector = "#grid-pager";
 				jQuery(grid_selector).jqGrid({
 					//direction: "rtl",
-					url: "/SearchForSuite/",
+					url: "/autotest/1/SearchForSuite/",
 					datatype: "json",
 					mtype: "POST",
 					colNames:['ID','Suite名','所属项目编号','所属项目名称','Suite描述','创建时间','更新时间','操作'],
@@ -138,7 +138,7 @@
 							enableTooltips(table);
 						}, 0);
 					},
-					editurl: "/edit_suite/",//nothing is saved
+					editurl: "/autotest/1/edit_suite/",//nothing is saved
 					// caption: "jqGrid with inline editing",
 					autowidth: true,
 					reloadAfterSubmit: true,
@@ -394,7 +394,7 @@
 
 
    function deletejob(id){
-                 	var url = '/delete_suite/';
+                 	var url = '/autotest/1/delete_suite/';
                     var p = {suite_id:id};
                     $.post(url,p,function(data, status){
                         // var json = eval("("+data+")")

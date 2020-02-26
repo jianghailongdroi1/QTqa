@@ -82,7 +82,7 @@
 				var pager_selector = "#grid-pager";
 				jQuery(grid_selector).jqGrid({
 					//direction: "rtl",
-					url: "/query_jobs/",
+					url: "/autotest/5/query_jobs/",
 					datatype: "json",
 					mtype: "POST",
 					colNames:['ID','任务名称','项目编号','项目名称','任务类型','任务描述','执行开始时间','执行间隔时间','执行次数','创建时间','更新时间','操作','查看任务执行结果','是否启用'],
@@ -123,7 +123,7 @@
 						// 	}
 						// },
 						{ formatter: function typeformatter(cellvalue, options, rowObject) {
-                        var details="<a href=\"/task_run_details?id="+rowObject.id+"\">查看任务报告</a>";
+                        var details="<a href=\"/backend/task_run_details?id="+rowObject.id+"\">查看任务报告</a>";
                         return details
 							}
 						},
@@ -164,7 +164,7 @@
 							enableTooltips(table);
 						}, 0);
 					},
-					editurl: "/edit_project/",//nothing is saved
+					editurl: "/autotest/3/edit_project/",//nothing is saved
 					// caption: "jqGrid with inline editing",
 					autowidth: true,
 					reloadAfterSubmit: true,
@@ -479,7 +479,7 @@
 
 
                 function deletejob(id){
-                 	var url = '/delete_job/';
+                 	var url = '/autotest/5/delete_job/';
                     var p = {job_id:id};
                     $.post(url,p,function(data, status){
                         // var json = eval("("+data+")")
@@ -494,7 +494,7 @@
 
               function enablejob(job_id,isenable){
                  	if (isenable == "1") {
-                 		var url = '/unenable_job/';
+                 		var url = '/autotest/5/unenable_job/';
                         var p = {job_id:job_id};
                        $.post(url,p,function(data, status){
                        	var json = eval("("+data+")")
@@ -508,7 +508,7 @@
                  	    })
 
                     }else{
-                 		var url = '/enable_job/';
+                 		var url = '/autotest/5/enable_job/';
                         var p = {job_id:job_id};
                        $.post(url,p,function(data, status){
                        	var json = eval("("+data+")")

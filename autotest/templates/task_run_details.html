@@ -82,7 +82,7 @@
 				var pager_selector = "#grid-pager";
 				jQuery(grid_selector).jqGrid({
 					//direction: "rtl",
-					url: "/query_job_results/",
+					url: "/autotest/4/query_job_results/",
 					datatype: "json",
 					mtype: "POST",
 					colNames:['ID','项目名称','任务名称','任务类型','执行结果','查看测试报告','任务开始时间','任务结束时间'],
@@ -130,7 +130,7 @@
 							enableTooltips(table);
 						}, 0);
 					},
-					editurl: "/edit_project/",//nothing is saved
+					editurl: "/autotest/3/edit_project/",//nothing is saved
 					// caption: "jqGrid with inline editing",
 					autowidth: true,
 					reloadAfterSubmit: true,
