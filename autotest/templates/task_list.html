@@ -205,7 +205,7 @@
                     }else{
                     	a = "启用"
                     }
-                 var editHtml="<a href='#' id= 'enable_id' onClick='enablejob("+rowObject.id+","+rowObject.enable+")'>" +a+ "</a>" + "<a href=\"/modify_task?id="+rowObject.id+"\"> 编辑</a>" + "<a href='#' onClick ='deletejob("+rowObject.id+");'> 删除</a>";
+                 var editHtml="<a href='#' id= 'enable_id' onClick='enablejob("+rowObject.id+","+rowObject.enable+")'>" +a+ "</a>" + "<a href=\"/backend/modify_task?id="+rowObject.id+"\"> 编辑</a>" + "<a href='#' onClick ='deletejob("+rowObject.id+");'> 删除</a>";
                   return editHtml
                 }
                                  
@@ -486,7 +486,7 @@
                         var json = eval("("+data+")")
                        if (json.code =='200') {
                        		alert("任务已删除")
-                       		window.location.href = "/task_list/";
+                       		window.location.reload();
                        	}
                     })
 
@@ -500,8 +500,8 @@
                        	var json = eval("("+data+")")
                        	if (json.code =='200') {
                        		alert("任务已停用")
-                       		window.location.href = "/task_list/";
-                       	}
+                       		window.location.reload();
+                     	}
                        	else{
                  	    	alert(json.msg)
                  	    }
@@ -514,7 +514,7 @@
                        	var json = eval("("+data+")")
                        	if (json.code =='200') {
                        		alert("任务已启用")
-                       		window.location.href = "/task_list/";
+                       		window.location.reload();
                  	    }else{
                  	    	alert(json.msg)
                  	    }

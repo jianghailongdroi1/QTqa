@@ -288,7 +288,7 @@ function link(cellvalue, options, rowObject) {
 					
 
                     
-                    var editHtml="<a href=\"/modify_project?id="+rowObject.id+"\">编辑</a>" + "<a href='#' onClick ='deleteproject("+rowObject.id+");'> 删除</a>";
+                    var editHtml="<a href=\"/backend/modify_project?id="+rowObject.id+"\">编辑</a>" + "<a href='#' onClick ='deleteproject("+rowObject.id+");'> 删除</a>";
 
                     return editHtml
 
@@ -403,7 +403,7 @@ function link(cellvalue, options, rowObject) {
                         var json = eval("("+data+")")
                        alert(json.msg); 
                         if(json.code == '200'){
-                            window.location.href = "/project_list/";
+                            window.location.reload();
                         }else{
                         alert(json.msg)
                     }

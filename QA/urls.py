@@ -53,7 +53,7 @@ urlpatterns = [
     url(r'^excute_job_by_thirdParty/(?P<project_code>.*)$', views.excute_job_by_thirdParty,
         name='excute_job_by_thirdParty'),
 
-    #新建项目
+    # 新建项目
     path('add_project/', views_project.add_project),
     #项目编辑接口
     path('edit_project/', views_project.edit_project),
@@ -61,20 +61,20 @@ urlpatterns = [
     path('delete_project/', views_project.delete_project),
     #项目查询接口(jiajia)
     url(r'^SearchForProject/$', views_project.SearchForProject),
-    path('project_list/', views_jiajia.project_list),
-    path('suite_list/', views_jiajia.suite_list),
+    # # path('project_list/', views_jiajia.project_list),
+    # path('suite_list/', views_jiajia.suite_list),
     path('job_details/', views_job.query_job_detail),
-    path('task_run_details/',views_jiajia.task_run_details),
-    path('modify_project/', views_jiajia.modify_project),
-    path('modify_suite/', views_jiajia.modify_suite),
+    # path('task_run_details/',views_jiajia.task_run_details),
+    # path('modify_project/', views_jiajia.modify_project),
+    # path('modify_suite/', views_jiajia.modify_suite),
 
     url(r'^add_task/$', views_job.create_job),
-    url(r'^modify_task/$',views_jiajia.modify_task),
-    path('task_list/', views_jiajia.task_list),
-    path('reports/', views_jiajia.reports),
+    # url(r'^modify_task/$',views_jiajia.modify_task),
+    # path('task_list/', views_jiajia.task_list),
+    # path('reports/', views_jiajia.reports),
     path('login/', views_jiajia.login),
     path('register/', views_jiajia.register),
-
+    #
     # 新建任务的接口
     url(r'^add_task/$', views_job.create_job),
 
@@ -92,6 +92,7 @@ urlpatterns = [
     url(r'^unenable_job/$', views_job.unenable_job),
 
     url(r'^reports/(\d+)$', views_jiajia.report),
+    url(r'^backend/([a-zA-z]+)/$', views_jiajia.html),
 
     # 新建suite的接口
     url(r'^add_suite/$', views_suite.add_suite),

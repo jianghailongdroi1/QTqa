@@ -6,42 +6,9 @@ from autotest.models import UserInfo
 import json
 from django.shortcuts import render_to_response
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, StreamingHttpResponse
+from django.shortcuts import render,redirect,HttpResponse
 
 from django.shortcuts import render_to_response
-
-def project_list(request):
-    request.method =='get'
-    return render_to_response('project_list.html')
-
-
-def suite_list(request):
-    request.method =='get'
-    return render_to_response('suite_list.html')
-
-def task_list(request):
-    request.method =='get'
-    return render_to_response('task_list.html')
-
-def reports(request):
-    request.method =='get'
-    return render_to_response('reports.html')
-
-def modify_task(request):
-    request.method =='get'
-    return render_to_response('modify_task.html')
-
-def task_run_details(request):
-    request.method == 'get'
-    return render_to_response('task_run_details.html')
-
-def modify_project(request):
-    request.method =='get'
-    return render_to_response('modify_project.html')
-
-def modify_suite(request):
-    request.method =='get'
-    return render_to_response('modify_suite.html')
-
 
 def register(request):
     if request.method == 'POST':
@@ -73,6 +40,7 @@ def login(request):
         if UserInfo.objects.filter(username__exact=username).filter(password__exact=password).count() == 1:
             data['code'] = '200'
             data['msg'] = '登录成功！'
+            request.session['username'] = username
             return HttpResponse(json.dumps(data, ensure_ascii=False))
         else:
             data['code'] = '1002'
@@ -81,6 +49,23 @@ def login(request):
     elif request.method == 'GET':
         return render_to_response("login.html")
 
+
+
+def is_login(func):
+    def inner(request,*args,**kwargs):
+        if request.session.get("username",default=None):
+            ret = func(request,*args,**kwargs)
+            return ret
+        else:
+            return redirect("/login/")
+    return inner
+
+@is_login
+def html(request,name):
+    request.method == 'get'
+    return render_to_response(name + '.html')
+
+@is_login
 def report(request,name):
     request.method == 'get'
     return render_to_response('reports/'+ name +'.html')

@@ -134,7 +134,7 @@
                     $.post(url, p,function(data, status){
                         var json = eval("("+data+")")
                         if(json.code == '200'){
-                            window.location.href = "/suite_list/";
+                            window.location.href = "/backend/suite_list/";
                         }else{
                         alert(json.msg)
                     }

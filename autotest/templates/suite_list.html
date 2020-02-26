@@ -287,7 +287,7 @@
 					
 
                     
-                    var editHtml="<a href=\"/modify_suite?id="+rowObject.id+"\">编辑</a>" + "<a href='#' onClick ='deletejob("+rowObject.id+");'> 删除</a>";
+                    var editHtml="<a href=\"/backend/modify_suite?id="+rowObject.id+"\">编辑</a>" + "<a href='#' onClick ='deletejob("+rowObject.id+");'> 删除</a>";
 
                     return editHtml
 
@@ -401,7 +401,7 @@
                         var json = eval("("+data+")")
                         alert(json.msg); 
                         if(json.code == '200'){
-                            window.location.href = "/suite_list/";
+                            window.location.reload();
                         }else{
                         alert(json.msg)
                     }
