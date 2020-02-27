@@ -57,7 +57,7 @@ def is_login(func):
             ret = func(request,*args,**kwargs)
             return ret
         else:
-            return redirect("/backend/login/")
+            return redirect("/autotest/2/login/")
     return inner
 
 @is_login

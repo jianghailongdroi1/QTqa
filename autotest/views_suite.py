@@ -209,4 +209,3 @@ def SearchForSuite_by_project_id(request):
 
         return HttpResponse(json.dumps(data, ensure_ascii=False))
 
-
