@@ -1,15 +1,15 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<title>HttpRunner 任务管理后台</title>
+		<title>自动化测试管理平台</title>
         {% load staticfiles %}
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<!-- basic styles -->
         <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}" />
 		<link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/font-awesome/3.2.1/css/font-awesome.min.css">
-<!-- 		<link rel="stylesheet" href="{% static 'assets/css/jquery-ui-1.10.3.full.min.css'%}" />
- -->
+		<link rel="stylesheet" href="{% static 'assets/css/jquery-ui-1.10.3.full.min.css'%}" />
+
 		<link rel="stylesheet" href="{% static 'assets/css/bootstrap-timepicker.css' %}" />
 		<link rel="stylesheet" href="{% static 'assets/css/ui.jqgrid.css' %}" />
 
@@ -49,7 +49,7 @@
 					<a href="#" class="navbar-brand">
 						<small>
 							<i class="icon-leaf"></i>
-							HttpRunner 任务管理后台
+							自动化测试管理平台
 						</small>
 					</a><!-- /.brand -->
 				</div><!-- /.navbar-header -->
@@ -79,7 +79,7 @@
 								</li>
 								<li class="divider"></li>
 								<li>
-									<a href="#">
+									<a href="#" id = "loginout" onclick="loginout(this)">
 										<i class="icon-off"></i>
 										退出
 									</a>
@@ -128,51 +128,60 @@
 						<li>
 							<a href="#" class="dropdown-toggle">
 								<i class="icon-list"></i>
-								<span class="menu-text"> 项目管理 </span>
+								<span class="menu-text"> 项目配置 </span>
 								<b class="arrow icon-angle-down"></b>
 							</a>
 							<ul class="submenu">
 								<li>
 									<a href= "/backend/add_project/">
 										<i class="icon-double-angle-right"></i>
-										新增项目
+										配置项目
 									</a>
 								<li>
 									<a href="/backend/project_list/">
 										<i class="icon-double-angle-right"></i>
-										项目列表
+										维护项目
 									</a>
 								</li>
-                               <li>
+							</ul>
+						</li>
+						<li>
+						    <a href="#" class="dropdown-toggle">
+								<i class="icon-calendar"></i>
+								<span class="menu-text"> 案例管理 </span>
+								<b class="arrow icon-angle-down"></b>
+							</a>
+							<ul class="submenu">
+                                <li>
 									<a href="/backend/add_suite/">
 										<i class="icon-double-angle-right"></i>
-										新增suite
+										新增案例集
 									</a>
 								</li>
 								<li>
 									<a href="/backend/suite_list/">
 										<i class="icon-double-angle-right"></i>
-										suite列表
+										维护案例集
 									</a>
 							</ul>
 						</li>
 						<li>
 							<a href="#" class="dropdown-toggle">
 								<i class="icon-calendar"></i>
-								<span class="menu-text"> 任务配置 </span>
+								<span class="menu-text"> 任务管理 </span>
 								<b class="arrow icon-angle-down"></b>
 							</a>
 							<ul class="submenu">
 								<li>
 									<a href="/backend/add_task/">
 										<i class="icon-double-angle-right"></i>
-										新增任务
+										新增测试任务
 									</a>
 								</li>
 								<li>
 									<a href="/backend/task_list/">
 										<i class="icon-double-angle-right"></i>
-										任务配置详情列表
+										查看任务
 									</a>
 								</li>
 							</ul>
@@ -187,7 +196,7 @@
 								<li>
 									<a href="/backend/task_run_details/">
 										<i class="icon-double-angle-right"></i>
-										查看报告
+										测试报告
 									</a>
 								</li>
 							</ul>
@@ -253,7 +262,6 @@
 		<script src="{% static 'assets/js/jqGrid/jquery.jqGrid.min.js' %}"></script>
 		<script src="{% static 'assets/js/jqGrid/i18n/grid.locale-en.js' %}"></script>
 		<script src="{% static 'assets/js/typeahead-bs2.min.js' %}"></script>
-		<script src="http://www.jq22.com/jquery/bootstrap-3.3.4.js"></script>
 		<script src="{% static 'assets/js/chosen.jquery.min.js' %}"></script>
 		<script src="{% static 'assets/js/ace-elements.min.js' %}"></script>
 		<script src="{% static 'assets/js/ace.min.js' %}"></script>
@@ -421,9 +429,25 @@
 				$('#tasks input:checkbox').removeAttr('checked').on('click', function(){
 					if(this.checked) $(this).closest('li').addClass('selected');
 					else $(this).closest('li').removeClass('selected');
-				});
+				});   
 
-		});		
+		});	
+
+			function loginout(obj){
+					var url = '/autotest/2/loginout/';
+					var p = {};
+					$.post(url,p,function(data, status){
+                        var json = eval("("+data+")")
+                       if(json.code == '200'){
+                            window.location.href = "/autotest/2/login/";
+                        }else{
+                        alert(json.msg)
+                    }
+                        });
+				};	
+
+
+      
 		</script>
 </body>
 </html>

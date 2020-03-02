@@ -25,7 +25,7 @@ SECRET_KEY = '1c)gec)^0nydy2=&agxf!#!*yq2f7g$qmxa(s_hhl1phr36okl'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["192.168.66.145"]
 
 # Application definition
 
@@ -82,7 +82,8 @@ DATABASES = {
         'PORT':'3306',
         'OPTIONS':{
             "init_command":"SET foreign_key_checks = 0;",
-        }
+        },
+
     }
 }
 
@@ -211,4 +212,12 @@ SCHEDULED_TASKS_RUN_SETTINGS={
 
 ESSION_SAVE_EVERY_REQUEST = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+EMAIL_USE_SSL = True
+EMAIL_HOST = 'smtp.qq.com'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = '790049767@qq.com' # 帐号
+EMAIL_HOST_PASSWORD = 'zrnpkdcfgvdjbeaa' # 密码
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+# CODE = ""
 
