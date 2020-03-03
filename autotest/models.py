@@ -190,3 +190,15 @@ class UserInfo(models.Model):
     # user_type = models.ForeignKey(UserType, on_delete=models.CASCADE)
     def __str__(self):
         return self.UserInfo
+
+class VerifyCode(models.Model):
+    class Meta:
+        verbose_name = '验证码信息'
+        db_table = 'VerifyCode'
+
+    email = models.EmailField('邮箱', max_length=20, unique=True, null=False)
+    code = models.CharField('验证码', max_length=20, null=False)
+    status = models.IntegerField('有效/无效', default=1)
+    # user_type = models.ForeignKey(UserType, on_delete=models.CASCADE)
+    def __str__(self):
+        return self.VerifyCode

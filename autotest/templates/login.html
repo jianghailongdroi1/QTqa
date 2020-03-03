@@ -127,27 +127,30 @@
 												<fieldset>
 													<label class="block clearfix">
 														<span class="block input-icon input-icon-right">
-															<input type="email" class="form-control" placeholder="邮箱" />
+															<input type="email" class="form-control" id="email" placeholder="邮箱" />
 															<i class="icon-envelope"></i>
 														</span>
+
 													</label>
 													<div class="clearfix">
-														<button type="button" class="width-35 pull-right btn btn-sm btn-danger">
+														<button type="button" class="width-35 pull-right btn btn-sm btn-danger" onclick="sendemail(this,'reset-password-box')">
 															<i class="icon-lightbulb"></i>
-															Send Me!
+															发送!
 														</button>
+				
 													</div>
 												</fieldset>
 											</form>
 										</div><!-- /widget-main -->
 										<div class="toolbar center">
 											<a href="#" onclick="show_box('login-box'); return false;" class="back-to-login-link">
-												Back to login
+												返回登录
 												<i class="icon-arrow-right"></i>
 											</a>
 										</div>
 									</div><!-- /widget-body -->
 								</div><!-- /forgot-box -->
+
 								<div id="signup-box" class="signup-box widget-box no-border">
 									<div class="widget-body">
 										<div class="widget-main">
@@ -161,25 +164,25 @@
 												<fieldset>
 													<label class="block clearfix">
 														<span class="block input-icon input-icon-right">
-															<input type="email" class="form-control" id = "email" placeholder="Email" />
-															<i class="icon-envelope"></i>
-														</span>
-													</label>
-													<label class="block clearfix">
-														<span class="block input-icon input-icon-right">
-															<input type="text" class="form-control" id="username" placeholder="用户名" />
+															<input type="text" class="form-control" id = "username_reg" placeholder="用户名" />
 															<i class="icon-user"></i>
 														</span>
 													</label>
 													<label class="block clearfix">
 														<span class="block input-icon input-icon-right">
-															<input type="password" class="form-control" id="register_password" placeholder="密码" />
+															<input type="email" class="form-control" id="email_reg" placeholder="Email" />
+															<i class="icon-envelope"></i>
+														</span>
+													</label>
+													<label class="block clearfix">
+														<span class="block input-icon input-icon-right">
+															<input type="password" class="form-control" id="password_reg" placeholder="密码" />
 															<i class="icon-lock"></i>
 														</span>
 													</label>
 													<label class="block clearfix">
 														<span class="block input-icon input-icon-right">
-															<input type="password" class="form-control" id="confirmpassword" placeholder="确认密码" />
+															<input type="password" class="form-control" id="confirmpassword_reg" placeholder="确认密码" />
 															<i class="icon-retweet"></i>
 														</span>
 													</label>
@@ -205,12 +208,73 @@
 												</fieldset>
 											</form>
 										</div>
-										<div class="toolbar center">
+									</div>
+									<div class="toolbar center">
 											<a href="#" onclick="show_box('login-box'); return false;" class="back-to-login-link">
 												<i class="icon-arrow-left"></i>
 												返回登录
 											</a>
+									</div>
+								</div>
+
+								<div id="reset-password-box" class="signup-box widget-box no-border">
+									<div class="widget-body">
+										<div class="widget-main">
+											<h4 class="header green lighter bigger">
+												<i class="icon-group blue"></i>
+												修改密码
+											</h4>
+											<div class="space-6"></div>
+											<p> 请输入以下信息： </p>
+											<form>
+												<fieldset>
+													<!-- <label class="block clearfix">
+														<span class="block input-icon input-icon-right">
+															<input type="email" class="form-control" id = "username_reset" placeholder="用户名" />
+															<i class="icon-envelope"></i>
+														</span>
+													</label> -->
+													<label class="block clearfix">
+														<span class="block input-icon input-icon-right">
+															<input type="text" class="form-control" id="verifycode_reset" placeholder="验证码" />
+															<i class="icon-user"></i>
+														</span>
+													</label>
+													<label class="block clearfix">
+														<span class="block input-icon input-icon-right">
+															<input type="password" class="form-control" id="password_reset" placeholder="新密码" />
+															<i class="icon-lock"></i>
+														</span>
+													</label>
+													<label class="block clearfix">
+														<span class="block input-icon input-icon-right">
+															<input type="password" class="form-control" id="confirmpassword_reset" placeholder="确认密码" />
+															<i class="icon-retweet"></i>
+														</span>
+													</label>
+													<div class="space-24"></div>
+													<div class="clearfix">
+														<button type="reset" class="width-30 pull-left btn btn-sm">
+															<i class="icon-refresh"></i>
+															重置
+														</button>
+														<button type="button" class="width-65 pull-right btn btn-sm btn-success" onclick="reset_pwd(this)" >
+															修改密码
+															<i class="icon-arrow-right icon-on-right"></i>
+														</button>
+													</div>
+												</fieldset>
+											</form>
 										</div>
+									</div>
+									<div class="toolbar center">
+											<a href="#" onclick="show_box('login-box'); return false;" class="back-to-login-link">
+												<i class="icon-arrow-left"></i>
+												返回登录
+											</a>
+									</div>
+								</div>
+										
 									</div><!-- /widget-body -->
 								</div><!-- /signup-box -->
 							</div><!-- /position-relative -->
@@ -249,9 +313,9 @@
 
 			function register(obj) {
                     var url = "/autotest/2/register/";
-                    var username0 = $(" #username ").val();
-                    var email0 = $("#email").val();
-                    var password0 = $(" #register_password").val();
+                    var username0 = $(" #username_reg ").val();
+                    var email0 = $("#email_reg").val();
+                    var password0 = $(" #password_reg").val();
                     var p = {username:username0, email:email0,password:password0};
                     console.log(obj)
 
@@ -292,6 +356,33 @@
                         }
                     });
                 }
+            function sendemail(obj,id){
+            	var url = "/autotest/2/forgetpwd/";
+            	var email = $(" #email").val();
+            	p = {email:email}
+            	$.get(url, p,function(data, status){
+            		var json = eval("("+data+")")
+            		if(json.code == '200'){
+            			console.log(id)
+                        show_box(id); return false;
+                        }else{
+                        alert(json.msg)
+                    }
+                        })
+
+            }
+
+            function reset_pwd(obj){
+            	var url = "/autotest/2/forgetpwd/";
+            	var email = $(" #email").val();
+            	var code = $(" #verifycode_reset").val();
+            	var password = $(" #password_reset").val();
+            	p = {email:email,password:password,code:code}
+            	$.post(url,p,function(data,status){
+            		var json = eval("("+data+")")
+            		alert(json.msg);
+            	 })
+            }
 
                 
 		</script>

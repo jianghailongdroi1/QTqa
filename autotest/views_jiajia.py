@@ -2,11 +2,13 @@ import requests
 import json
 import logging
 from autotest import models
-from autotest.models import UserInfo
+from autotest.models import UserInfo,VerifyCode
 import json
 from django.shortcuts import render_to_response
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, StreamingHttpResponse
 from django.shortcuts import render,redirect,HttpResponse
+import random
+from django.core.mail import send_mail   # 导入邮箱模块
 
 from django.shortcuts import render_to_response
 
@@ -49,6 +51,51 @@ def login(request):
     elif request.method == 'GET':
         return render_to_response("login.html")
 
+def verifycode(randomlength=8):
+    str = ''
+    chars = 'abcdefghijklmnopqrstuvwsyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+    length = len(chars) - 1
+    for i in range(randomlength):
+        str += chars[random.randint(0, length)]
+    return str
+
+def forgetpwd(request):
+    data = {}
+    codeObj = VerifyCode.objects
+    if request.method=="GET":
+        email = request.GET.get("email")
+        email_title = "找回密码"
+        code = verifycode()#随机生成的验证码
+        if codeObj.filter(email = email).count()<1:
+            codeObj.create(email=email,code = code,status = 1)
+        else:
+            codeObj.filter(email=email).update(code=code,status=1)
+        # request.session["code"]=code #将验证码保存到session
+        email_body = "验证码为：{0}".format(code)
+        send_status = send_mail(email_title, email_body,"790049767@qq.com",[email],fail_silently=False)
+        data['code'] = "200"
+        data['msg']="验证码已发送，请查收邮件"
+        return HttpResponse(json.dumps(data,ensure_ascii=False))
+    else:
+        email =  request.POST.get("email")
+        password = request.POST.get("password")
+        code = request.POST.get("code") #获取传递过来的验证码
+        # 判断验证码是否一致
+        if codeObj.filter(email = email).filter(status=1).count() >= 1:
+            if code == codeObj.get(email = email).code:
+                UserInfo.objects.filter(email=email).update(password=password)
+                codeObj.filter(email=email).update(status = 0)
+                data['code'] = '200'
+                data['msg'] = '密码已重置，快去登录吧'
+                return HttpResponse(json.dumps(data, ensure_ascii=False))
+            else:
+                data['code'] = '1001'
+                data['msg'] = '验证码错误'
+                return HttpResponse(json.dumps(data, ensure_ascii=False))
+        else:
+            data['code'] = '1002'
+            data['msg'] = '请先获取验证码'
+        return HttpResponse(json.dumps(data, ensure_ascii=False))
 
 
 def is_login(func):
@@ -59,6 +106,15 @@ def is_login(func):
         else:
             return redirect("/autotest/2/login/")
     return inner
+
+@is_login
+def loginout(request):
+    request.method = "POST"
+    request.session.flush()
+    data={}
+    data['code'] = '200'
+    data['msg'] = '退出成功！'
+    return HttpResponse(json.dumps(data, ensure_ascii=False))
 
 @is_login
 def html(request,name):
