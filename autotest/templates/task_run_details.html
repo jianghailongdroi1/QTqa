@@ -24,7 +24,7 @@
 								报告管理
 								<small>
 									<i class="icon-double-angle-right"></i>
-									测试报告
+									查看报告
 								</small>
 							</h1>
 						</div><!-- /.page-header -->
@@ -77,6 +77,14 @@
 		<!-- ace scripts -->
 		<!-- inline scripts related to this page -->
 		<script type="text/javascript">
+
+			function getUrlParam(name) {
+             var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象  
+             var r = window.location.search.substr(1).match(reg);  //匹配目标参数   
+             if (r != null) return unescape(r[2]); return null; //返回参数值  
+             };
+
+
 			jQuery(function($) {
 				var grid_selector = "#grid-table";
 				var pager_selector = "#grid-pager";
@@ -85,6 +93,7 @@
 					url: "/autotest/4/query_job_results/",
 					datatype: "json",
 					mtype: "POST",
+					postData: {job_id: getUrlParam("id")},
 					colNames:['ID','项目名称','任务名称','任务类型','执行结果','查看测试报告','任务开始时间','任务结束时间'],
 					colModel:[
 						{name:'id',index:'id',width:70, editable:true},

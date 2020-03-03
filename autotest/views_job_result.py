@@ -52,11 +52,11 @@ def query_job_results(request):
                 result_objs = models.Job_result.objects.filter(project_id =project_id ,cronjob_id= job_id)
             else:
                 #job_id为空
-                result_objs = models.Job_result.objects.filter(project_id=project_id)
+                 result_objs = models.Job_result.objects.filter(project_id=project_id)
         else:
             #project_id为空
             #job_id不为空
-            if job_id != None:
+            if job_id:
                 #判断job_id是否存在
                 if models.CronJob.objects.filter(id = job_id,effective_flag= 1).count() == 0:
                     data['code'] = '1001'
@@ -110,4 +110,4 @@ def query_job_results(request):
 
         return HttpResponse(json.dumps(data, ensure_ascii=False))
     else:
-        return render_to_response('job_list.html')
+        return render_to_response('task_run_details.html')
