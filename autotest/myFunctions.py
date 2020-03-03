@@ -170,6 +170,7 @@ def excute_single_subtask(single_subtask):
     for i in suite_dic:
         suite_list.append(suite_path + i["suite_name"])
 
+
     #跑每个suite
     for suite in suite_list:
 
@@ -249,11 +250,11 @@ def scheduler_task_in_startupItems():
 #重构第三方调用接口生成任务的方法
 # 接口被调用后，查询是否存在主任务，存在则新增其子任务
 def create_new_subtask(project_code):
-    res={"status":200,"msg":"操作成功"}
+    res={"code":200,"msg":"操作成功"}
     #查询是否存在对应的项目
     project_count = models.Project.objects.filter(effective_flag=1,project_code=project_code).count()
     if project_count != 1:
-        res["status"] = 400
+        res["code"] = 401
         res["msg"]="project code错误"
     else:
         project_obj = models.Project.objects.filter(effective_flag=1).first()
@@ -262,7 +263,7 @@ def create_new_subtask(project_code):
                                                       type = 'called_task',
                                                       project = project_obj).count()
         if cronjob_count == 0:
-            res["status"] = 400
+            res["code"] = 402
             res["msg"] = "不存在对应的任务"
         else:
             # print('根据查询到的主任务新增子任务')
