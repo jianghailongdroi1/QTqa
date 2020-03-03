@@ -1,4 +1,5 @@
 import datetime
+import os
 
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
@@ -12,7 +13,7 @@ logger = logging.getLogger('HttpRunnerManager')
 from autotest.models import Project
 import json,math
 from django.shortcuts import render_to_response
-
+from pathlib import Path
 
 
 #新建suite
@@ -31,11 +32,25 @@ def add_suite(request):
             data['code'] = '1002'
             data['msg'] = '项目不存在'
             return HttpResponse(json.dumps(data, ensure_ascii=False))
-        else:
+        #判断suite是否存在
+        #获取project的code
+        project_code = project_obj.values('project_code').get()['project_code']
+        print('project_code:',project_code)
+        # 判断这个项目是否在setting文件中存在
+        project_path = settings.HTTPRUNNER_PROJECT_PATH[project_code]
+        print('project_path:',project_path)
+        suite_path = os.path.join(project_path + '\\testsuites\\', suite_name)
+        print('suite_path:',suite_path)
+        suite_file = Path(suite_path)
+        if suite_file.is_file():
             suite_obj = models.suite(project_id=project_id, suite_name=suite_name, description=description)
             suite_obj.save()
             data['code'] = '200'
             data['msg'] = '添加成功'
+            return HttpResponse(json.dumps(data, ensure_ascii=False))
+        else:
+            data['code'] = '1003'
+            data['msg'] = '案例集名不是实际存在的文件'
             return HttpResponse(json.dumps(data, ensure_ascii=False))
     else:
         return render_to_response('add_suite.html')
@@ -86,13 +101,28 @@ def edit_suite(request):
             data['msg'] = '项目不存在'
             return HttpResponse(json.dumps(data, ensure_ascii=False))
         else:
-            models.suite.objects.filter(id =suite_id).update(project_id=project_id, suite_name=suite_name,
-                                     description=description,time_updated = datetime.datetime.now()
-                                                             )
+            # 判断suite是否存在
+            # 获取project的code
+            project_code = project_obj.values('project_code').get()['project_code']
+            print('project_code:', project_code)
+            # 判断这个项目是否在setting文件中存在
+            project_path = settings.HTTPRUNNER_PROJECT_PATH[project_code]
+            print('project_path:', project_path)
+            suite_path = os.path.join(project_path + '\\testsuites\\', suite_name)
+            print('suite_path:', suite_path)
+            suite_file = Path(suite_path)
+            if suite_file.is_file():
+                models.suite.objects.filter(id =suite_id).update(project_id=project_id, suite_name=suite_name,
+                                         description=description,time_updated = datetime.datetime.now() )
 
-            data['code'] = '200'
-            data['msg'] = '修改成功'
-            return HttpResponse(json.dumps(data, ensure_ascii=False))
+                data['code'] = '200'
+                data['msg'] = '修改成功'
+                return HttpResponse(json.dumps(data, ensure_ascii=False))
+            else:
+                data['code'] = '1004'
+                data['msg'] = '案例集名不是实际存在的文件'
+                return HttpResponse(json.dumps(data, ensure_ascii=False))
+
     else:
         return render_to_response('suite_list.html')
 

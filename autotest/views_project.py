@@ -1,4 +1,5 @@
 import datetime,math
+from pathlib import Path
 
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
@@ -20,6 +21,8 @@ def add_project(request):
         project_code0 = request.POST.get('project_code',None)
         project_name0 = request.POST.get('project_name',None)
         description0 = request.POST.get('description',None)
+
+
         if not all ([project_code0,project_name0]):
             data['code'] = '1001'
             data['msg'] = '必填项为空'
@@ -29,12 +32,29 @@ def add_project(request):
             data['code'] = '1002'
             data['msg'] = '项目编号已存在'
             return HttpResponse(json.dumps(data, ensure_ascii=False))
-        else:
-            new = Project(project_code=project_code0, project_name=project_name0, description=description0)
-            new.save()
-            data['code'] = '200'
-            data['msg'] = '添加成功'
+
+        # 判断这个项目是否在setting文件中存在
+        project_paths = settings.HTTPRUNNER_PROJECT_PATH
+
+        if project_code0 not in project_paths:
+            data['code'] = '1003'
+            data['msg'] = '请先在setting.py文件中配置HTTPRUNNER_PROJECT_PATH'
             return HttpResponse(json.dumps(data, ensure_ascii=False))
+        else:
+            #判断setting.py配置的HTTPRUNNER_PROJECT_PATH是否存在
+            dir_name = project_paths[project_code0]
+            mydir = Path(dir_name)
+            if mydir.exists():
+                new = Project(project_code=project_code0, project_name=project_name0, description=description0)
+                new.save()
+                data['code'] = '200'
+                data['msg'] = '添加成功'
+                return HttpResponse(json.dumps(data, ensure_ascii=False))
+            else:
+                data['code'] = '1004'
+                data['msg'] = 'setting.py文件中配置的HTTPRUNNER_PROJECT_PATH错误'
+                return HttpResponse(json.dumps(data, ensure_ascii=False))
+
     return render_to_response('add_project.html')
 
 #编辑项目
@@ -61,18 +81,33 @@ def edit_project(request):
         else:
             #校验project_code不在已有的项目中存在
             if models.Project.objects.filter(project_code =project_code).exclude(id = project_id).count() != 0:
-                data['code'] = '1002'
+                data['code'] = '1003'
                 data['msg'] = 'project_code已存在'
                 return HttpResponse(json.dumps(data, ensure_ascii=False))
 
+            # 判断这个项目是否在setting文件中存在
+            project_paths = settings.HTTPRUNNER_PROJECT_PATH
 
-            models.Project.objects.filter(id = project_id).update( project_code=project_code,
-                                          project_name =project_name,description=description,time_updated = datetime.datetime.now()
-                                                             )
+            if project_code not in project_paths:
+                data['code'] = '1004'
+                data['msg'] = '请先在setting.py文件中配置HTTPRUNNER_PROJECT_PATH'
+                return HttpResponse(json.dumps(data, ensure_ascii=False))
+            else:
+                # 判断setting.py配置的HTTPRUNNER_PROJECT_PATH是否存在
+                dir_name = project_paths[project_code]
+                mydir = Path(dir_name)
+                if mydir.exists():
+                    models.Project.objects.filter(id = project_id).update( project_code=project_code,
+                                                  project_name =project_name,description=description,time_updated = datetime.datetime.now()
+                                                                     )
 
-            data['code'] = '200'
-            data['msg'] = '修改成功'
-            return HttpResponse(json.dumps(data, ensure_ascii=False))
+                    data['code'] = '200'
+                    data['msg'] = '修改成功'
+                    return HttpResponse(json.dumps(data, ensure_ascii=False))
+                else:
+                    data['code'] = '1004'
+                    data['msg'] = 'setting.py文件中配置的HTTPRUNNER_PROJECT_PATH错误'
+                    return HttpResponse(json.dumps(data, ensure_ascii=False))
     else:
         return render_to_response('add_project.html')
 
