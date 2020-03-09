@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 from httprunner.api import HttpRunner
-from django.http import HttpResponse,request
+from django.http import HttpResponse,request,JsonResponse
 import datetime,os,re
 # from httprunner.report.html.gen_report import gen_html_report
 import time,logging
@@ -252,7 +252,7 @@ def scheduler_task_in_startupItems():
 #重构第三方调用接口生成任务的方法
 # 接口被调用后，查询是否存在主任务，存在则新增其子任务
 def create_new_subtask(project_code):
-    res={"code":200,"msg":"操作成功"}
+    res={"code":200,"msg":"新增子任务成功"}
     #查询是否存在对应的项目
     project_count = models.Project.objects.filter(effective_flag=1,project_code=project_code).count()
     if project_count != 1:
@@ -274,7 +274,8 @@ def create_new_subtask(project_code):
             # 根据查询到的主任务新增子任务
             models.Subtask.objects.create(cronjob=cronjob_obj,
                                           time_excepte_excuted=get_current_time())
-    return HttpResponse(json.dumps(res))
+    return JsonResponse(res)
+    # return HttpResponse(json.dumps(res))
 
 #重构执行子任务的方法
 def excute_subtasks():

@@ -51,7 +51,7 @@ urlpatterns = [
     url(r'^excute_subtasks', views.excute_all_subtasks),
 
     # 对外提供的执行冒烟测试的接口
-    url(r'^excute_job_by_thirdParty/(?P<project_code>.*)$', views.excute_job_by_thirdParty,
+    url(r'^excute_job_by_thirdParty/$', views.excute_job_by_thirdParty,
         name='excute_job_by_thirdParty'),
 
     # # 新建项目
