@@ -9,7 +9,7 @@ import json
 from django.conf import settings
 from autotest import models
 
-# logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 #获取当前时间
 def get_current_time():
@@ -34,11 +34,11 @@ def run_httprunnner_script(suite):
         summary["reportpath"]=report
         # summary["reportpath"]=result_runner
         # print("summary:",summary)
-        # logger.info("summary:"+str(summary))
+        logger.info("summary:"+str(summary))
 
         return summary
     else:
-        # logger.error(suite+"不存在！")
+        logger.error(suite+"不存在！")
         raise Exception(suite+"不存在！")
 
 #获取suite的目录
@@ -61,8 +61,8 @@ def reset_cronjob_status():
     cronjob_count = models.CronJob.objects.filter(enable=1,status__in=[2,3],
                                                   type__in=['timing_task','instant_task']).count()
     if cronjob_count == 0:
-        # logger.info("重置任务的状态时发现：除第三方调用的任务外，没有运行中的定时任务")
-        print("重置任务的状态时发现：除第三方调用的任务外，没有运行中的定时任务")
+        logger.info("重置任务的状态时发现：除第三方调用的任务外，没有运行中的定时任务")
+        # print("重置任务的状态时发现：除第三方调用的任务外，没有运行中的定时任务")
 
     else:
         for cronjob_obj in models.CronJob.objects.filter(enable=1,status__in=[2,3],
@@ -88,10 +88,10 @@ def reset_cronjob_status():
                 #最近一次子任务的状态
                 last_status = models.Subtask.objects.filter(cronjob=cronjob_obj,
                                                         effective_flag=1).order_by('time_updated').last().status
-                # logger.info("last_status："+last_status)
+                logger.info("last_status："+last_status)
             else:
                 #当没有最近执行的子任务时，给last_status设个值
-                # logger.error(str(cronjob_obj)+"没有子任务")
+                logger.error(str(cronjob_obj)+"没有子任务")
                 last_status = 10
 
             #所有子任务都过期时，定时任务状态为 已过期，已启用状态
@@ -109,8 +109,8 @@ def reset_cronjob_status():
                 # print('最近一次执行的任务状态为 执行异常，定时任务状态为 异常，已启用状态')
                 models.CronJob.objects.filter(id=cronjob_obj.id).update(status=3)
             else:
-                pass
-                # logger.info("不更新定时任务状态")
+                # pass
+                logger.info("不更新定时任务状态")
 
 
 #重构后的查询待执行子任务方法，返回待执行的子任务对象列表
@@ -127,7 +127,7 @@ def search_subtask_to_excuted(interval_time):
                                     time_excepte_excuted__range=(last_scheduler_time,next_scheduler_time)).count()
 
     print("number_subtasks_to_excuted:",number_subtasks_to_excuted)
-    # logger.info("number_subtasks_to_excuted:%d"%(number_subtasks_to_excuted))
+    logger.info("number_subtasks_to_excuted:%d"%(number_subtasks_to_excuted))
 
     if number_subtasks_to_excuted == 0:
         return None
@@ -150,16 +150,16 @@ def excute_subtasks_objs(subtask_objs):
             subtask.status = '4'
             subtask.save()
         except Exception as e:
-            # logger.error("子任务"+str(subtask)+"处理失败，以下为错误信息："+e)
+            logger.error("子任务"+str(subtask)+"处理失败，以下为错误信息："+e)
             subtask.status = '3'
             subtask.save()
 
 #重构后的执行子任务
 def excute_single_subtask(single_subtask):
     cronjob = single_subtask.cronjob
-    # logger.info('cronjob:'+str(cronjob))
+    logger.info('cronjob:'+str(cronjob))
     project_code = cronjob.project.project_code
-    # logger.info('project_code:'+project_code)
+    logger.info('project_code:'+project_code)
     # excuter = cronjob.type
 
     #根据定时任务获取相关的suites
@@ -289,7 +289,7 @@ def excute_subtasks():
 
     # 执行查询到的subtask
     if subtask_objs is not None:
-        # logger.info('subtask_objs:'+str(subtask_objs))
+        logger.info('subtask_objs:'+str(subtask_objs))
         excute_subtasks_objs(subtask_objs)
 
     #查看子任务的状态，然后看是否要更新 定时任务表
