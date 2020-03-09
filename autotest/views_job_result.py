@@ -99,7 +99,7 @@ def query_job_results(request):
         else:
             # count不为0时
             total_page_num = math.ceil(count/perPageItemNum)
-
+        main.log
 
         data = {'total':count,
                         'total_page_num': total_page_num,

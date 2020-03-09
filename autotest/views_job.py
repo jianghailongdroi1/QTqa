@@ -7,8 +7,8 @@ from django.conf import settings
 from autotest import myFunctions
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-import logging
-logger = logging.getLogger('HttpRunnerManager')
+# import logging
+# logger = logging.getLogger('HttpRunnerManager')
 from autotest.models import Project
 import json,math
 from django.shortcuts import render_to_response
