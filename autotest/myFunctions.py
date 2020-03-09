@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 from httprunner.api import HttpRunner
-from django.http import HttpResponse,request
+from django.http import HttpResponse,request,JsonResponse
 import datetime,os,re
 # from httprunner.report.html.gen_report import gen_html_report
 import time,logging
@@ -62,6 +62,7 @@ def reset_cronjob_status():
                                                   type__in=['timing_task','instant_task']).count()
     if cronjob_count == 0:
         logger.info("重置任务的状态时发现：除第三方调用的任务外，没有运行中的定时任务")
+        # print("重置任务的状态时发现：除第三方调用的任务外，没有运行中的定时任务")
 
     else:
         for cronjob_obj in models.CronJob.objects.filter(enable=1,status__in=[2,3],
@@ -108,6 +109,7 @@ def reset_cronjob_status():
                 # print('最近一次执行的任务状态为 执行异常，定时任务状态为 异常，已启用状态')
                 models.CronJob.objects.filter(id=cronjob_obj.id).update(status=3)
             else:
+                # pass
                 logger.info("不更新定时任务状态")
 
 
@@ -250,14 +252,14 @@ def scheduler_task_in_startupItems():
 #重构第三方调用接口生成任务的方法
 # 接口被调用后，查询是否存在主任务，存在则新增其子任务
 def create_new_subtask(project_code):
-    res={"code":200,"msg":"操作成功"}
+    res={"code":200,"msg":"新增子任务成功"}
     #查询是否存在对应的项目
     project_count = models.Project.objects.filter(effective_flag=1,project_code=project_code).count()
     if project_count != 1:
         res["code"] = 401
-        res["msg"]="project code错误"
+        res["msg"]="project_code错误"
     else:
-        project_obj = models.Project.objects.filter(effective_flag=1).first()
+        project_obj = models.Project.objects.filter(effective_flag=1,project_code = project_code).first()
         #查询是否存在对应项目的 用于“第三方调用”的主任务
         cronjob_count = models.CronJob.objects.filter(effective_flag=1,status =2,
                                                       type = 'called_task',
@@ -272,7 +274,8 @@ def create_new_subtask(project_code):
             # 根据查询到的主任务新增子任务
             models.Subtask.objects.create(cronjob=cronjob_obj,
                                           time_excepte_excuted=get_current_time())
-    return HttpResponse(json.dumps(res))
+    return JsonResponse(res)
+    # return HttpResponse(json.dumps(res))
 
 #重构执行子任务的方法
 def excute_subtasks():
