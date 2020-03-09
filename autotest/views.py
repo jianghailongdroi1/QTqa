@@ -22,8 +22,21 @@ def excute_all_subtasks(request):
     return myFunctions.test_excute_subtasks()
 
 #重构外部冒烟测试接口
-def excute_job_by_thirdParty(request,project_code):
-    return myFunctions.create_new_subtask(project_code)
+def excute_job_by_thirdParty(request):
+    result ={}
+    if request.method == "POST":
+        project_code = request.POST.get('project_code',None)
+        address = request.POST.get('address',None)
+        print("address:",address)
+        if not all ([project_code]):
+            result['code'] = '400'
+            result['msg'] = 'project_code为必填项'
+            return JsonResponse(result)
+        return myFunctions.create_new_subtask(project_code)
+    else:
+        result['code'] = '405'
+        result['msg'] = '请求方式错误'
+        return JsonResponse(result)
 
 #
 # #新增项目
