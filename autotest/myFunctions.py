@@ -8,6 +8,7 @@ import requests
 import json
 from django.conf import settings
 from autotest import models
+from autotest.myUtil.commonFunction import fix_httprunner_env
 
 logger = logging.getLogger(__name__)
 
@@ -191,47 +192,7 @@ def excute_single_subtask(single_subtask):
                                           executed_result=summary,
                                          link_for_result=report_path, time_start_excute=start_time)
 
-#作废的方法
-# def test_run_cronjob(cronjob_id):
-#     cronjob_obj = models.CronJob.objects.filter(id = cronjob_id)[0]
-#
-#     project_code = cronjob_obj.project.project_code
-#
-#     #根据定时任务获取相关的suites
-#     if cronjob_obj.suite_set.filter(effective_flag=1).count() == 0:
-#         return  HttpResponse('没有关联的suite')
-#     suite_dic = cronjob_obj.suite_set.filter(effective_flag=1).values("suite_name")
-#
-#     # 获取项目的根目录，并拼接
-#     suite_path = get_project_basedir(project_code) + '\\testsuites\\'
-#     suite_list = []
-#     for i in suite_dic:
-#         suite_list.append(suite_path + i["suite_name"])
-#
-#     try:
-#         #跑每个suite
-#         for suite in suite_list:
-#             result = run_httprunnner_script(suite)
-#             report_path = result['reportpath']
-#             start_time = result['time']['start_datetime']
-#             summary = result['stat']['testcases']
-#             result_name = cronjob_obj.job_name + '任务在' + start_time + "手动触发执行的结果"
-#
-#             # 将执行结果放入表中
-#             project_obj = cronjob_obj.project
-#             models.Job_result.objects.create(result_name=result_name, project=project_obj,
-#                                              execute_by=3, executed_result=summary,
-#                                              link_for_result=report_path, time_start_excute=start_time)
-#
-#         cronjob_obj.status = '6'
-#         cronjob_obj.save()
-#
-#         return HttpResponse(' 试运行成功！')
-#
-#     except Exception:
-#         cronjob_obj.status = '3'
-#         cronjob_obj.save()
-#         return HttpResponse(' 试运行失败！')
+
 
 #重构获取项目路径
 
@@ -251,7 +212,7 @@ def scheduler_task_in_startupItems():
 
 #重构第三方调用接口生成任务的方法
 # 接口被调用后，查询是否存在主任务，存在则新增其子任务
-def create_new_subtask(project_code):
+def create_new_subtask(project_code,address):
     res={"code":200,"msg":"新增子任务成功"}
     #查询是否存在对应的项目
     project_count = models.Project.objects.filter(effective_flag=1,project_code=project_code).count()
@@ -271,11 +232,21 @@ def create_new_subtask(project_code):
             # print('根据查询到的主任务新增子任务')
             cronjob_obj = models.CronJob.objects.filter(effective_flag=1, status=2, type='called_task',
                                                           project=project_obj).first()
+            #修改对应的httprunner项目的.env中的base_url
+            if address:
+                print('==================================================================================')
+                print('project_basedir:',get_project_basedir(project_code))
+
+                env_filename = get_project_basedir(project_code) + '\\.env'
+                print('env_filename:', env_filename)
+                print('==================================================================================')
+
+                fix_httprunner_env(filename=env_filename,key='base_url',value=address)
             # 根据查询到的主任务新增子任务
             models.Subtask.objects.create(cronjob=cronjob_obj,
                                           time_excepte_excuted=get_current_time())
     return JsonResponse(res)
-    # return HttpResponse(json.dumps(res))
+
 
 #重构执行子任务的方法
 def excute_subtasks():

@@ -32,7 +32,7 @@ def excute_job_by_thirdParty(request):
             result['code'] = '400'
             result['msg'] = 'project_code为必填项'
             return JsonResponse(result)
-        return myFunctions.create_new_subtask(project_code)
+        return myFunctions.create_new_subtask(project_code,address)
     else:
         result['code'] = '405'
         result['msg'] = '请求方式错误'

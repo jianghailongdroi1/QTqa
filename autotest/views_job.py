@@ -325,6 +325,7 @@ def query_job_detail(request):
         return HttpResponse(json.dumps(data, ensure_ascii=False))
     else:
         return render_to_response('job_list.html')
+
 #启动任务,新建子任务
 def enable_job(request):
     if request.method == "POST":
