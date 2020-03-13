@@ -22,3 +22,23 @@ class MyEncoder(json.JSONEncoder):
         if isinstance(obj, bytes):
             return str(obj, encoding='utf-8')
         return json.JSONEncoder.default(self, obj)
+
+def fix_httprunner_env(filename,key,value):
+    file = filename
+
+    with open(file,'r',encoding='utf-8') as f:
+        lines=[] # 创建了一个空列表，里面没有元素
+        for line in f.readlines():
+            if line!='\n':
+                lines.append(line)
+
+    with open(file,'w',encoding='utf-8') as f:
+        for line in lines:
+            kv = line.strip().split('=')
+
+            if key == kv[0]:
+                line = key + '=' +  value
+                f.write('%s' % line)
+                f.write('%s' % '\n')
+            else:
+                f.write('%s' %line)
