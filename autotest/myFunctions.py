@@ -234,12 +234,12 @@ def create_new_subtask(project_code,address):
                                                           project=project_obj).first()
             #修改对应的httprunner项目的.env中的base_url
             if address:
-                print('==================================================================================')
-                print('project_basedir:',get_project_basedir(project_code))
+                # print('==================================================================================')
+                # print('project_basedir:',get_project_basedir(project_code))
 
                 env_filename = get_project_basedir(project_code) + '\\.env'
-                print('env_filename:', env_filename)
-                print('==================================================================================')
+                # print('env_filename:', env_filename)
+                # print('==================================================================================')
 
                 fix_httprunner_env(filename=env_filename,key='base_url',value=address)
             # 根据查询到的主任务新增子任务
