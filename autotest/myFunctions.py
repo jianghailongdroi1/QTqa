@@ -1,15 +1,28 @@
 # -*- coding:utf-8 -*-
 from httprunner.api import HttpRunner
-from django.http import HttpResponse,request
-import datetime,os
+import numpy as np
+from django.http import HttpResponse,request,JsonResponse
+import datetime,os,re
 # from httprunner.report.html.gen_report import gen_html_report
 import time,logging
 import requests
 import json
+from bs4 import BeautifulSoup as bs
 from django.conf import settings
 from autotest import models
+import time
+import subprocess  # 这个库是能够直接运行脚本的关键
+from autotest.myUtil.commonFunction import get_randomstr
+import sys
+import os
+o_path = os.getcwd() # 返回当前工作目录
+ss_path = os.path.abspath(os.path.join(os.getcwd(), "../..")) #获取上上级目录
+c_path = os.path.abspath(os.path.join(os.getcwd(), "../../selenium/testcases"))
+#sys.path.append(o_path) # 添加自己指定的搜索路径
+sys.path.append(ss_path)
+sys.path.append(c_path)
 
-logger = logging.getLogger(__name__)
+from Git.selenium.testcases import config
 
 #获取当前时间
 def get_current_time():
@@ -18,16 +31,53 @@ def get_current_time():
     str_time = time.strftime('%Y-%m-%d %H:%M:%S', local_time)
     return str_time
 
-#重构后的执行suite方法
+#获取当前时间戳并转换成str类型
+def get_randomstr():
+    nowtime = int(time.time())
+    str_nowtime = str(nowtime)
+    return str_nowtime
+
+#执行selenium项目py文件方法
+def run_selenium_script(suite):
+
+    #kwarg = settings.SELENIUM_PROJECT_PATH
+
+    # reportname = config.reportname
+    # reportpath = config.reportpath
+
+
+
+    if os.path.exists(suite):
+        subprocess.Popen(["python",suite])
+        #summary = runner.summary
+        # 将报告放到summary中去
+        # 将报告地址进行处理，只保留文件名
+    #     pattern = reportname
+    #     report = reportpath
+    #     # 保存
+    #     summary["reportpath"] = report
+    #     logger.info("summary:" + str(summary))
+    #
+    #     return summary
+    else:
+        logger.error(suite+"不存在！")
+        raise Exception(suite+"不存在！")
+
+# 重构后的执行suite方法
 def run_httprunnner_script(suite):
-    kwargs=settings.HTTPRUNNER_RUN_SETTINGS
+    kwargs = settings.HTTPRUNNER_RUN_SETTINGS
     runner = HttpRunner(**kwargs)
 
     if os.path.exists(suite):
         result_runner = runner.run(suite)
         summary = runner.summary
         #将报告放到summary中去
-        summary["reportpath"]=result_runner
+        #将报告地址进行处理，只保留文件名
+        pattern = r'\d+.html'
+        report = re.search(pattern, result_runner).group()
+        #保存
+        summary["reportpath"]=report
+        # summary["reportpath"]=result_runner
         # print("summary:",summary)
         logger.info("summary:"+str(summary))
 
@@ -35,6 +85,34 @@ def run_httprunnner_script(suite):
     else:
         logger.error(suite+"不存在！")
         raise Exception(suite+"不存在！")
+
+
+
+logger = logging.getLogger(__name__)
+
+#重构后的执行suite方法
+# def run_httprunnner_script(suite):
+#     kwargs=settings.HTTPRUNNER_RUN_SETTINGS
+#     runner = HttpRunner(**kwargs)
+#
+#
+#     if os.path.exists(suite):
+#         result_runner = runner.run(suite)
+#         summary = runner.summary
+#         #将报告放到summary中去
+#         #将报告地址进行处理，只保留文件名
+#         pattern = r'\d+.html'
+#         report = re.search(pattern, result_runner).group()
+#         #保存
+#         summary["reportpath"]=report
+#         # summary["reportpath"]=result_runner
+#         # print("summary:",summary)
+#         logger.info("summary:"+str(summary))
+#
+#         return summary
+#     else:
+#         logger.error(suite+"不存在！")
+#         raise Exception(suite+"不存在！")
 
 #获取suite的目录
 def get_testsuitesPath_by_projectCode(project_code):
@@ -57,6 +135,7 @@ def reset_cronjob_status():
                                                   type__in=['timing_task','instant_task']).count()
     if cronjob_count == 0:
         logger.info("重置任务的状态时发现：除第三方调用的任务外，没有运行中的定时任务")
+        # print("重置任务的状态时发现：除第三方调用的任务外，没有运行中的定时任务")
 
     else:
         for cronjob_obj in models.CronJob.objects.filter(enable=1,status__in=[2,3],
@@ -103,6 +182,7 @@ def reset_cronjob_status():
                 # print('最近一次执行的任务状态为 执行异常，定时任务状态为 异常，已启用状态')
                 models.CronJob.objects.filter(id=cronjob_obj.id).update(status=3)
             else:
+                # pass
                 logger.info("不更新定时任务状态")
 
 
@@ -163,26 +243,70 @@ def excute_single_subtask(single_subtask):
 
     suite_list = []
     for i in suite_dic:
+
         suite_list.append(suite_path + i["suite_name"])
 
     #跑每个suite
     for suite in suite_list:
+        print(suite)
+        #name = os.path.splitext(suite)[0]
+        suffix = os.path.splitext(suite)[1]
+        #print("name:{}".format(name))
+        print("suffix:{}".format(suffix))
+        if suffix == '.yml':
+            # #第一步获取suite完整的路径
+            # filename = getdsjfkj(suite)
+            # #执行
+            # run_selenium_script(filename)
+            # #获取返回值
+            # #存入数据库
 
-        result = run_httprunnner_script(suite)
+            result = run_httprunnner_script(suite)
 
-        report_path = result['reportpath']
-        start_time = result['time']['start_datetime']
-        summary = result['stat']['testcases']
-        result_name =cronjob.job_name + '任务在' + start_time + "执行的结果"
 
-        # 将执行结果放入表中
-        project_obj = cronjob.project
-        models.Job_result.objects.create(result_name=result_name, project=project_obj,
-                                         cronjob = cronjob,
-                                         subtask = single_subtask,
-                                          executed_result=summary,
-                                         link_for_result=report_path, time_start_excute=start_time)
+            report_path = result['reportpath']
+            start_time = result['time']['start_datetime']
+            summary = result['stat']['testcases']
+            result_name =cronjob.job_name + '任务在' + start_time + "执行的结果"
 
+            # 将执行结果放入表中
+            project_obj = cronjob.project
+            models.Job_result.objects.create(result_name=result_name, project=project_obj,
+                                             cronjob = cronjob,
+                                             subtask = single_subtask,
+                                              executed_result=summary,
+                                             link_for_result=report_path, time_start_excute=start_time)
+        elif suffix == '.py':
+            run_selenium_script(suite)
+
+            report_name = config.reportname
+            report_path = config.reportpath
+            #print(report_path)
+
+            np.save('E:\\Git\\selenium\\testcases\\a.npy',report_path)
+            start_time = config.start_time
+            time.sleep(30)
+            soup = bs(open(report_path, encoding='utf-8'), features='html.parser')
+            total_row = soup.find('tr', {'id': 'total_row'})
+            # print(total_row)
+            total = total_row.select('tr td')[1].string
+            print('total:'+total)
+            passes = total_row.select('tr td')[2].string
+            print('pass:'+passes)
+            fails = total_row.select('tr td')[3].string
+            print('fail:'+fails)
+            summary = "{total:"+ total +" ,success:"+ passes + " ,fail:"+ fails +"}"
+            result_name =cronjob.job_name + '任务在' + start_time + "执行的结果"
+
+            # 将执行结果放入表中
+            project_obj = cronjob.project
+            models.Job_result.objects.create(result_name=result_name, project=project_obj,
+                                             cronjob = cronjob,
+                                             subtask = single_subtask,
+                                              executed_result=summary,
+                                             link_for_result=report_name, time_start_excute=start_time)
+        else:
+            print("测试脚本不支持")
 #作废的方法
 # def test_run_cronjob(cronjob_id):
 #     cronjob_obj = models.CronJob.objects.filter(id = cronjob_id)[0]
@@ -244,20 +368,20 @@ def scheduler_task_in_startupItems():
 #重构第三方调用接口生成任务的方法
 # 接口被调用后，查询是否存在主任务，存在则新增其子任务
 def create_new_subtask(project_code):
-    res={"status":200,"msg":"操作成功"}
+    res={"code":200,"msg":"新增子任务成功"}
     #查询是否存在对应的项目
     project_count = models.Project.objects.filter(effective_flag=1,project_code=project_code).count()
     if project_count != 1:
-        res["status"] = 400
-        res["msg"]="project code错误"
+        res["code"] = 401
+        res["msg"]="project_code错误"
     else:
-        project_obj = models.Project.objects.filter(effective_flag=1).first()
+        project_obj = models.Project.objects.filter(effective_flag=1,project_code = project_code).first()
         #查询是否存在对应项目的 用于“第三方调用”的主任务
         cronjob_count = models.CronJob.objects.filter(effective_flag=1,status =2,
                                                       type = 'called_task',
                                                       project = project_obj).count()
         if cronjob_count == 0:
-            res["status"] = 400
+            res["code"] = 402
             res["msg"] = "不存在对应的任务"
         else:
             # print('根据查询到的主任务新增子任务')
@@ -266,7 +390,8 @@ def create_new_subtask(project_code):
             # 根据查询到的主任务新增子任务
             models.Subtask.objects.create(cronjob=cronjob_obj,
                                           time_excepte_excuted=get_current_time())
-    return HttpResponse(json.dumps(res))
+    return JsonResponse(res)
+    # return HttpResponse(json.dumps(res))
 
 #重构执行子任务的方法
 def excute_subtasks():
