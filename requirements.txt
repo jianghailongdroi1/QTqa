@@ -3,7 +3,7 @@ APScheduler==2.1.2
 attrs==19.3.0
 Automat==0.8.0
 billiard==3.6.1.0
-celery==4.3.0
+celery==5.2.2
 certifi==2019.11.28
 cffi==1.13.2
 chardet==3.0.4
